@@ -1,0 +1,41 @@
+
+
+@import 'antd/dist/reset.css';
+@import 'tailwindcss';
+@import './components/and-components';
+@import './components/scroll.css';
+@import './components/animations.css';
+
+:root {
+  --primary-color: red;
+  --secondary-color: orange;
+}
+
+*{
+  font-family: system-ui;
+}
+
+.border-primary {
+    border-color:  var(--primary-color);
+}
+
+.text-primary {
+  color: var(--primary-color);
+}
+
+.text-secondary {
+  color: var(--secondary-color);
+}
+
+.bg-primary {
+  background-color: var(--primary-color);
+}
+
+.bg-secondary {
+  background-color: var(--secondary-color);
+}
+
+.ant-select {
+  width: 100% !important;
+}
+

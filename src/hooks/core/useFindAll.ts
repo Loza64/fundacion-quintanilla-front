@@ -1,0 +1,136 @@
+import BaseEntity from '@/models/api/core/_BaseEntity'
+import AbstractService from '@/models/api/core/AbstractService'
+import PaginationResponse from '@/models/api/core/PaginationResponse'
+import {
+  useQuery,
+  UseQueryResult,
+  UseQueryOptions,
+  useQueryClient,
+} from '@tanstack/react-query'
+import { useCallback, useMemo } from 'react'
+
+type QueryData<Entity extends BaseEntity> = PaginationResponse<Entity>
+
+type QueryOpts<Entity extends BaseEntity> = UseQueryOptions<
+  QueryData<Entity>,
+  Error,
+  QueryData<Entity>,
+  readonly unknown[]
+>
+
+export interface UseListOptions<Entity extends BaseEntity> extends Omit<
+  QueryOpts<Entity>,
+  'queryKey' | 'queryFn'
+> {
+  service: AbstractService<Entity>
+  endpoint?: string
+  queryParams?: Record<string, unknown>
+  queryKey: string | string[]
+}
+
+export type FindAllResult<Entity extends BaseEntity> = UseQueryResult<
+  QueryData<Entity>,
+  Error
+>
+
+// ─── Constants ────────────────────────────────────────────────────────────────
+
+const EMPTY_PAGINATION: PaginationResponse<never>['pagination'] = {
+  total: 0,
+  page: 1,
+  pageSize: 0,
+  nextCursor: '',
+  pageCount: 0,
+}
+
+export const useFindAll = <Entity extends BaseEntity>({
+  service,
+  endpoint,
+  queryParams = {},
+  queryKey,
+  ...options
+}: UseListOptions<Entity>) => {
+  const queryClient = useQueryClient()
+
+  const normalizedQueryKey = useMemo(
+    () => (Array.isArray(queryKey) ? queryKey : [queryKey]),
+    [queryKey]
+  )
+
+  const stableQueryParams = useMemo(
+    () => JSON.stringify(queryParams),
+    [queryParams]
+  )
+
+  const finalQueryKey = useMemo(
+    () => [...normalizedQueryKey, endpoint ?? null, stableQueryParams] as const,
+    [normalizedQueryKey, endpoint, stableQueryParams]
+  )
+
+  // ─── Query ──────────────────────────────────────────────────────────────────
+  const hook = useQuery<QueryData<Entity>, Error>({
+    queryKey: finalQueryKey,
+    queryFn: () =>
+      service.findAll({
+        endpoint,
+        config: { params: queryParams },
+      }),
+    ...options,
+  })
+
+  // ─── Cache helpers ──────────────────────────────────────────────────────────
+  const getSafeCache = useCallback(
+    (old?: QueryData<Entity>): QueryData<Entity> =>
+      old ?? { data: [], pagination: { ...EMPTY_PAGINATION } },
+    []
+  )
+
+  const addItemInCache = useCallback(
+    (item: Entity) => {
+      queryClient.setQueryData<QueryData<Entity>>(finalQueryKey, (old) => {
+        const base = getSafeCache(old)
+        if (base.data.some((i) => i.id === item.id)) return base
+        return { ...base, data: [item, ...base.data] }
+      })
+    },
+    [queryClient, finalQueryKey, getSafeCache]
+  )
+
+  const updateItemInCache = useCallback(
+    (id: string | number, updater: (item: Entity) => Entity) => {
+      queryClient.setQueryData<QueryData<Entity>>(finalQueryKey, (old) => {
+        const base = getSafeCache(old)
+        return {
+          ...base,
+          data: base.data.map((item) =>
+            item.id === id ? updater(item) : item
+          ),
+        }
+      })
+    },
+    [queryClient, finalQueryKey, getSafeCache]
+  )
+
+  const removeItemInCache = useCallback(
+    (id: string | number) => {
+      queryClient.setQueryData<QueryData<Entity>>(finalQueryKey, (old) => {
+        const base = getSafeCache(old)
+        return { ...base, data: base.data.filter((item) => item.id !== id) }
+      })
+    },
+    [queryClient, finalQueryKey, getSafeCache]
+  )
+
+  const emptyCache = useCallback(() => {
+    queryClient.setQueryData<QueryData<Entity>>(finalQueryKey, getSafeCache())
+  }, [queryClient, finalQueryKey, getSafeCache])
+
+  return {
+    ...hook,
+    finalQueryKey,
+    addItemInCache,
+    updateItemInCache,
+    removeItemInCache,
+    emptyCache,
+  }
+}

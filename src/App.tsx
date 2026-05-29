@@ -1,0 +1,25 @@
+import { Routes } from '@generouted/react-router/lazy'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+import dayjs from 'dayjs'
+import 'dayjs/locale/es'
+import { RecoilRoot } from 'recoil'
+import { queryClient } from './lib/queryClient'
+import { QueryClientProvider } from '@tanstack/react-query'
+
+dayjs.locale('es')
+
+function App() {
+  return (
+    <>
+      <ToastContainer />
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <Routes />
+        </QueryClientProvider>
+      </RecoilRoot>
+    </>
+  )
+}
+
+export default App
