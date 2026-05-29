@@ -3,9 +3,9 @@ import type { ThemeConfig } from 'antd'
 const baseBG = '#ffffff'
 const layoutBG = '#ffffff'
 
-const primaryColor = 'red'
-const primaryHover = 'red'
-const secondaryColor = 'orange'
+const primaryColor = '#00C10D'
+const primaryHover = '#03840C'
+const secondaryColor = 'white'
 
 const textBase = '#1f2937'
 const borderColor = '#e5e7eb'
