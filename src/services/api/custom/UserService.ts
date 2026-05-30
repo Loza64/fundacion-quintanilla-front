@@ -11,11 +11,20 @@ export default class UserService extends Service<User> {
     })
   }
 
-  public async login(body: {
+  public async login({
+    username,
+    password,
+    onUnauthorized,
+  }: {
     username: string
     password: string
+    onUnauthorized?: () => void
   }): Promise<SessionResponse> {
-    const res = await this.axios.post<SessionResponse>('/auth/login', body)
+    const res = await this.axios.post<SessionResponse>(
+      '/auth/login',
+      { username, password },
+      { onUnauthorized }
+    )
     return res.data
   }
 

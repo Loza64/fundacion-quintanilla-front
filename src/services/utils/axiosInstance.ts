@@ -1,20 +1,18 @@
 import { appSettings } from '@/AppSettings'
 import { queryClient, queryKeys } from '@/lib/queryClient'
-import errorResponse from '@/utils/errorResponse'
 import axios, { type AxiosInstance } from 'axios'
+import { toast } from 'react-toastify'
 
 const DEFAULT_TIMEOUT_MS = 15_000
 
 export interface AxiosInstanceParams {
   origin: string
   initPath: string
-  onUnauthorized?: () => void
 }
 
 export const axiosInstance = ({
   origin,
   initPath,
-  onUnauthorized,
 }: AxiosInstanceParams): AxiosInstance => {
   const instance = axios.create({
     baseURL: `${origin}/${initPath}`,
@@ -38,18 +36,28 @@ export const axiosInstance = ({
     (error) => {
       const status = error?.response?.status
 
+      const onUnauthorized = error.config?.onUnauthorized
+      const onForbidden = error.config?.onForbidden
+
       if (status === 401) {
-        appSettings.removeToken()
-        queryClient.setQueryData(queryKeys.session, null)
-        const redirect =
-          onUnauthorized ??
-          (() => {
-            window.location.href = '/login'
-          })
-        redirect()
-        return Promise.reject(error)
+        if (onUnauthorized) {
+          onUnauthorized()
+        } else {
+          toast.warning('Su sesión ha expirado')
+          appSettings.removeToken()
+          queryClient.setQueryData(queryKeys.session, null)
+          window.location.href = '/login'
+        }
       }
-      errorResponse({ error })
+
+      if (status === 403) {
+        if (onForbidden) {
+          onForbidden()
+        } else {
+          toast.warning('No tienes permiso para realizar esta petición')
+        }
+      }
+
       return Promise.reject(error)
     }
   )

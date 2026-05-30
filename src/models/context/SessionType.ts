@@ -6,6 +6,7 @@ export default interface SessionType {
   login: (payload: {
     username: string
     password: string
+    onUnauthorized?: () => void
   }) => Promise<SessionResponse>
   signup: (payload: User) => Promise<SessionResponse>
   saveSession: (session: SessionResponse) => void

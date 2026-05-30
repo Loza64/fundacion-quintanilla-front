@@ -1,5 +1,5 @@
 import { useSession } from '@/hooks/useSession'
-import { Button, Form, Input, Tabs } from 'antd'
+import { Button, Form, Input, message, Tabs } from 'antd'
 import logo from '@/assets/img/logo.png'
 
 interface LoginProps {
@@ -17,6 +17,9 @@ export default function AuthView() {
       const response = await login({
         username: values.username.trim(),
         password: values.password,
+        onUnauthorized() {
+          message.warning('Usuario o contraseña incorrectos')
+        },
       })
 
       loginForm.resetFields()

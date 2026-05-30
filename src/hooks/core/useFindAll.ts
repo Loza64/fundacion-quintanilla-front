@@ -26,6 +26,8 @@ export interface UseListOptions<Entity extends BaseEntity> extends Omit<
   endpoint?: string
   queryParams?: Record<string, unknown>
   queryKey: string | string[]
+  onUnauthorized?: () => void
+  onForbidden?: () => void
 }
 
 export type FindAllResult<Entity extends BaseEntity> = UseQueryResult<
@@ -48,6 +50,8 @@ export const useFindAll = <Entity extends BaseEntity>({
   endpoint,
   queryParams = {},
   queryKey,
+  onUnauthorized,
+  onForbidden,
   ...options
 }: UseListOptions<Entity>) => {
   const queryClient = useQueryClient()
@@ -73,7 +77,7 @@ export const useFindAll = <Entity extends BaseEntity>({
     queryFn: () =>
       service.findAll({
         endpoint,
-        config: { params: queryParams },
+        config: { params: queryParams, onForbidden, onUnauthorized },
       }),
     ...options,
   })

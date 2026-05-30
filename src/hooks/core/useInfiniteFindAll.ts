@@ -30,6 +30,8 @@ export interface UseInfiniteListOptions<
   endpoint?: string
   queryKey: string | string[]
   queryParams?: Record<string, unknown>
+  onUnauthorized?: () => void
+  onForbidden?: () => void
   getNextPageParam: NonNullable<
     InfiniteOpts<Entity, Selected>['getNextPageParam']
   >
@@ -55,6 +57,8 @@ const useInfiniteFindAll = <
   queryParams = {},
   getNextPageParam,
   initialPageParam = undefined,
+  onForbidden,
+  onUnauthorized,
   ...options
 }: UseInfiniteListOptions<Entity, Selected>) => {
   const queryClient = useQueryClient()
@@ -90,6 +94,8 @@ const useInfiniteFindAll = <
               ? (pageParam as Record<string, unknown>)
               : {}),
           },
+          onUnauthorized,
+          onForbidden,
         },
       }),
     getNextPageParam,

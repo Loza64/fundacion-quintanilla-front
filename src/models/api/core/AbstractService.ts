@@ -2,46 +2,52 @@ import type { AxiosRequestConfig } from 'axios'
 import PaginationResponse from './PaginationResponse'
 import { BaseResponse } from './BaseResponse'
 
+interface RequestMeta {
+  onUnauthorized?: () => void
+  onForbidden?: () => void
+}
+
+export type ServiceConfig = AxiosRequestConfig & RequestMeta
+
 export interface ApiServiceParams {
   endpoint?: string
   initPath?: string
   origin?: string
-  onUnauthorized?: () => void
 }
 export interface FindAllParams {
   endpoint?: string
-  config?: AxiosRequestConfig
+  config?: ServiceConfig
 }
 
 export interface FindByIdParams {
   id?: number
   endpoint?: string
-  config?: AxiosRequestConfig
+  config?: ServiceConfig
 }
 
 export interface FindBy {
   endpoint?: string
   path: string
-  config?: AxiosRequestConfig
+  config?: ServiceConfig
 }
 
 export interface CreateParams<Entity> {
   payload: Entity | FormData
   endpoint?: string
-  config?: AxiosRequestConfig
+  config?: ServiceConfig
 }
 
 export interface UpdateParams<Entity> {
   id: string
   payload: Partial<Entity> | FormData
   endpoint?: string
-  config?: AxiosRequestConfig
+  config?: ServiceConfig
 }
 
 export interface DeleteParams {
   id: string
   endpoint?: string
-  config?: AxiosRequestConfig
+  config?: ServiceConfig
 }
 
 export default abstract class AbstractService<Entity> {
