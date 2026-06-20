@@ -1,42 +1,11 @@
-//import { searchRecoil } from "@/constants/recoil";
-
-//import useRecoil from "@/hooks/useRecoil";
-import { useFindAll } from '@/hooks/core/useFindAll'
 import { queryKeys } from '@/lib/queryClient'
 import type User from '@/models/api/entities/User'
 import { userService } from '@/services/api'
-import { Table, Button, Space } from 'antd'
-import type { ColumnsType, TablePaginationConfig } from 'antd/es/table'
-import { useMemo, useState } from 'react'
+import CrudListView from '@/views/core/CrudListView'
+import { Button, Space } from 'antd'
+import type { ColumnsType } from 'antd/es/table'
 
 export default function DashboardView() {
-  const [params, setParams] = useState<Record<string, unknown>>({
-    search: '',
-    page: 1,
-    size: 15,
-  })
-
-  const { data, isLoading } = useFindAll({
-    queryKey: queryKeys.users,
-    service: userService,
-    queryParams: params,
-  })
-
-  //const [search] = useRecoil<string | undefined>(searchRecoil)
-  //console.log(search)
-
-  const response = useMemo(() => data, [data])
-
-  console.log(response)
-
-  const handleTableChange = (pagination: TablePaginationConfig) => {
-    setParams((prev) => ({
-      ...prev,
-      page: (pagination.current ?? 1) - 1,
-      size: pagination.pageSize ?? prev.size,
-    }))
-  }
-
   const columns: ColumnsType<User> = [
     { title: 'ID', dataIndex: 'id', key: 'id', align: 'center' },
     {
@@ -69,21 +38,10 @@ export default function DashboardView() {
   ]
 
   return (
-    <div>
-      <Table<User>
-        columns={columns}
-        dataSource={response?.data}
-        loading={isLoading}
-        rowKey="id"
-        pagination={{
-          current: response?.pagination.page ?? 1,
-          pageSize: response?.pagination.pageSize,
-          total: response?.pagination.total ?? 0,
-          showSizeChanger: true,
-          position: ['bottomCenter'],
-        }}
-        onChange={handleTableChange}
-      />
-    </div>
+    <CrudListView<User>
+      service={userService}
+      queryKey={queryKeys.users}
+      columns={columns}
+    />
   )
 }

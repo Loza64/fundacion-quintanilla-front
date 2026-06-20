@@ -82,6 +82,44 @@ export default function useCrud<Entity extends BaseEntity>({
       queryClient.invalidateQueries({ queryKey: normalizedQueryKey }),
   })
 
+  const softDeleteMutation = useMutation({
+    mutationFn: (
+      params: DeleteParams & {
+        onUnauthorized?: () => void
+        onForbidden?: () => void
+      }
+    ) =>
+      service.softDelete({
+        ...params,
+        config: {
+          ...params.config,
+          onForbidden: onForbidden ?? params.onForbidden,
+          onUnauthorized: onUnauthorized ?? params.onUnauthorized,
+        },
+      }),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: normalizedQueryKey }),
+  })
+
+  const restoreMutation = useMutation({
+    mutationFn: (
+      params: DeleteParams & {
+        onUnauthorized?: () => void
+        onForbidden?: () => void
+      }
+    ) =>
+      service.restore({
+        ...params,
+        config: {
+          ...params.config,
+          onForbidden: onForbidden ?? params.onForbidden,
+          onUnauthorized: onUnauthorized ?? params.onUnauthorized,
+        },
+      }),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: normalizedQueryKey }),
+  })
+
   const useFindById = (
     params: FindByIdParams & {
       onUnauthorized?: () => void
@@ -125,14 +163,20 @@ export default function useCrud<Entity extends BaseEntity>({
     create: createMutation.mutateAsync,
     update: updateMutation.mutateAsync,
     remove: removeMutation.mutateAsync,
+    softDelete: softDeleteMutation.mutateAsync,
+    restore: restoreMutation.mutateAsync,
 
     isCreating: createMutation.isPending,
     isUpdating: updateMutation.isPending,
     isDeleting: removeMutation.isPending,
+    isSoftDeleting: softDeleteMutation.isPending,
+    isRestoring: restoreMutation.isPending,
 
     createError: createMutation.error,
     updateError: updateMutation.error,
     deleteError: removeMutation.error,
+    softDeleteError: softDeleteMutation.error,
+    restoreError: restoreMutation.error,
 
     useFindById,
     useFindByPath: useFindBy,

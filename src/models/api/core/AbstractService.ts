@@ -57,4 +57,6 @@ export default abstract class AbstractService<Entity> {
   abstract create(params: CreateParams<Entity>): Promise<BaseResponse<Entity>>
   abstract update(params: UpdateParams<Entity>): Promise<BaseResponse<Entity>>
   abstract delete(params: DeleteParams): Promise<void>
+  abstract softDelete(params: DeleteParams): Promise<BaseResponse<Entity>>
+  abstract restore(params: DeleteParams): Promise<BaseResponse<Entity>>
 }
