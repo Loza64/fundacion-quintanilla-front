@@ -1,5 +1,5 @@
 import type { CrudSummaryItem, RelationTab } from '@/models/app/crud'
-import { Descriptions, Drawer, Tabs } from 'antd'
+import { Drawer, Tabs } from 'antd'
 
 export interface CrudDetailDrawerProps<Entity> {
   open: boolean
@@ -27,17 +27,16 @@ export default function CrudDetailDrawer<Entity>({
       destroyOnHidden
     >
       {record && summary && (
-        <Descriptions
-          bordered
-          size="small"
-          column={2}
-          className="mb-6"
-          items={summary(record).map((item, index) => ({
-            key: index,
-            label: item.label,
-            children: item.value,
-          }))}
-        />
+        <div className="mb-6 grid grid-cols-1 gap-x-6 gap-y-4 rounded-lg border border-gray-100 bg-gray-50 p-4 sm:grid-cols-2">
+          {summary(record).map((item, index) => (
+            <div key={index} className="flex flex-col gap-0.5">
+              <span className="text-xs font-semibold tracking-wide text-gray-400 uppercase">
+                {item.label}
+              </span>
+              <span className="text-sm text-gray-800">{item.value}</span>
+            </div>
+          ))}
+        </div>
       )}
 
       {record && relations.length > 0 && (
