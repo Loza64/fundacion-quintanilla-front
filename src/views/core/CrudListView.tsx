@@ -56,7 +56,7 @@ export default function CrudListView<Entity extends BaseEntity>({
     : columns
 
   return (
-    <div>
+    <div className="px-4 md:px-6">
       {toolbar}
       <Table<Entity>
         columns={tableColumns}
