@@ -1,4 +1,5 @@
 import type { Rule } from 'antd/es/form'
+import type { ReactNode } from 'react'
 
 export type CrudFieldType =
   | 'text'
@@ -30,4 +31,15 @@ export interface CrudFilter {
   name: string
   label: string
   options: CrudSelectOption[]
+}
+
+export interface CrudSummaryItem {
+  label: string
+  value: ReactNode
+}
+
+export interface RelationTab<Parent> {
+  key: string
+  label: string
+  render: (parent: Parent) => ReactNode
 }

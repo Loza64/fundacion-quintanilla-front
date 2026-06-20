@@ -1,4 +1,13 @@
-import { CircleUser, KeyRound, Shield, Users } from 'lucide-react'
+import {
+  BedDouble,
+  Building2,
+  CircleUser,
+  Gift,
+  KeyRound,
+  Shield,
+  Users,
+  Wrench,
+} from 'lucide-react'
 import React from 'react'
 import type { LucideProps } from 'lucide-react'
 import type { MenuItem, SubMenuItem } from '@/models/app/menu'
@@ -29,6 +38,38 @@ export const menu: MenuItem[] = [
     key: RoutesEnum.PERMISSIONS,
     icon: createIcon(KeyRound),
     label: 'Permisos',
+    authorized: [roles.admin],
+    view: true,
+    children: [],
+  },
+  {
+    key: RoutesEnum.ALBERGUES,
+    icon: createIcon(Building2),
+    label: 'Albergues',
+    authorized: [roles.admin],
+    view: true,
+    children: [],
+  },
+  {
+    key: RoutesEnum.HABITACIONES,
+    icon: createIcon(BedDouble),
+    label: 'Habitaciones',
+    authorized: [roles.admin],
+    view: true,
+    children: [],
+  },
+  {
+    key: RoutesEnum.BENEFICIOS,
+    icon: createIcon(Gift),
+    label: 'Beneficios',
+    authorized: [roles.admin],
+    view: true,
+    children: [],
+  },
+  {
+    key: RoutesEnum.SERVICIOS,
+    icon: createIcon(Wrench),
+    label: 'Servicios',
     authorized: [roles.admin],
     view: true,
     children: [],

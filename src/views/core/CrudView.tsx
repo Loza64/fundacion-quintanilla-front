@@ -1,9 +1,15 @@
+import CrudDetailDrawer from '@/components/crud/CrudDetailDrawer'
 import CrudFormModal from '@/components/crud/CrudFormModal'
 import useCrud from '@/hooks/core/useCrud'
 import useDebouncedValue from '@/hooks/core/useDebouncedValue'
 import type AbstractService from '@/models/api/core/AbstractService'
 import type BaseEntity from '@/models/api/core/_BaseEntity'
-import type { CrudField, CrudFilter } from '@/models/app/crud'
+import type {
+  CrudField,
+  CrudFilter,
+  CrudSummaryItem,
+  RelationTab,
+} from '@/models/app/crud'
 import CrudListView from '@/views/core/CrudListView'
 import { FilterOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons'
 import { Badge, Button, Input, Popover, Popconfirm, Select, Space } from 'antd'
@@ -27,6 +33,10 @@ export interface CrudViewProps<Entity extends BaseEntity> {
   canCreate?: boolean
   canEdit?: (record: Entity) => boolean
   canDelete?: (record: Entity) => boolean
+  scopeParams?: Record<string, unknown>
+  defaults?: Record<string, unknown>
+  relations?: RelationTab<Entity>[]
+  summary?: (entity: Entity) => CrudSummaryItem[]
 }
 
 function errorMessage(error: unknown, fallback: string): string {
@@ -51,6 +61,10 @@ export default function CrudView<Entity extends BaseEntity>({
   canCreate = true,
   canEdit = () => true,
   canDelete = () => true,
+  scopeParams,
+  defaults,
+  relations = [],
+  summary,
 }: CrudViewProps<Entity>) {
   const [open, setOpen] = useState(false)
   const [mode, setMode] = useState<'create' | 'edit'>('create')
@@ -61,6 +75,7 @@ export default function CrudView<Entity extends BaseEntity>({
     {}
   )
   const [searchInput, setSearchInput] = useState('')
+  const [detailRecord, setDetailRecord] = useState<Entity | null>(null)
 
   const search = useDebouncedValue(searchInput, 350)
 
@@ -98,7 +113,10 @@ export default function CrudView<Entity extends BaseEntity>({
   }
 
   const handleSubmit = async (values: Record<string, unknown>) => {
-    const payload = (toPayload ? toPayload(values) : values) as Partial<Entity>
+    const payload = {
+      ...(toPayload ? toPayload(values) : values),
+      ...defaults,
+    } as Partial<Entity>
     try {
       if (mode === 'create') {
         await create({ payload: payload as Entity })
@@ -123,8 +141,15 @@ export default function CrudView<Entity extends BaseEntity>({
     }
   }
 
+  const hasDetail = relations.length > 0 || !!summary
+
   const rowActions = (record: Entity) => (
     <Space>
+      {hasDetail && (
+        <Button type="link" onClick={() => setDetailRecord(record)}>
+          Ver
+        </Button>
+      )}
       {canEdit(record) && (
         <Button type="link" onClick={() => openEdit(record)}>
           Editar
@@ -145,7 +170,7 @@ export default function CrudView<Entity extends BaseEntity>({
     </Space>
   )
 
-  const extraParams: Record<string, unknown> = {}
+  const extraParams: Record<string, unknown> = { ...scopeParams }
   if (searchable && search.trim()) extraParams.search = search.trim()
   for (const [key, value] of Object.entries(filterValues)) {
     if (value !== undefined && value !== '') extraParams[key] = value
@@ -236,6 +261,16 @@ export default function CrudView<Entity extends BaseEntity>({
         onCancel={() => setOpen(false)}
         onSubmit={handleSubmit}
       />
+      {hasDetail && (
+        <CrudDetailDrawer<Entity>
+          open={!!detailRecord}
+          title={`Detalle de ${label}`}
+          record={detailRecord}
+          relations={relations}
+          summary={summary}
+          onClose={() => setDetailRecord(null)}
+        />
+      )}
     </>
   )
 }

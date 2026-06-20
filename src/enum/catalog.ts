@@ -1,0 +1,54 @@
+export const TIPO_ALBERGUE = [
+  'TEMPORAL',
+  'PERMANENTE',
+  'ADULTO_MAYOR',
+  'INFANTIL',
+  'DISCAPACIDAD',
+  'MUJERES',
+  'HOMBRES',
+  'FAMILIAR',
+  'EMERGENCIA',
+  'REHABILITACION',
+  'MIGRANTES',
+  'MIXTO',
+] as const
+
+export const TIPO_HABITACION = [
+  'INDIVIDUAL',
+  'COMPARTIDA',
+  'FAMILIAR',
+  'EMERGENCIA',
+  'AISLAMIENTO',
+] as const
+
+export const ESTADO_HABITACION = [
+  'DISPONIBLE',
+  'OCUPADA',
+  'RESERVADA',
+  'MANTENIMIENTO',
+  'INACTIVA',
+] as const
+
+export const TIPO_BENEFICIO = [
+  'SALUD',
+  'EDUCACION',
+  'CAPACITACION',
+  'EMPLEO',
+  'EMPRENDIMIENTO',
+  'ALBERGUE',
+  'ALIMENTACION',
+  'VESTIMENTA',
+  'APOYO_SOCIAL',
+  'EMERGENCIA',
+] as const
+
+export const TIPO_SERVICIO = [
+  'MEDICO',
+  'PSICOLOGICO',
+  'ALIMENTACION',
+  'HIGIENE',
+  'EDUCACION',
+  'RECREACION',
+  'ALOJAMIENTO',
+  'OTRO',
+] as const

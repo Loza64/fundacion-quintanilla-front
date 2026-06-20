@@ -57,10 +57,27 @@ Infra CRUD reutilizable creada y validada en navegador:
 
 > Modelos corregidos de paso: `User` (faltaban `name`/`blocked`), `Permissions` (tipo erróneo), `Role` (+`active`), `RoleName` ampliado para roles arbitrarios.
 
-## ⬜ Fase 2 — Catálogos base (sin dependencias)
-- [ ] **Albergues** → **Habitaciones**
-- [ ] **Beneficios**
-- [ ] **Servicios**
+## ✅ Fase 2 — Catálogos base — **COMPLETADA**
+
+- [x] **Albergues** (`AlbergueView`): CRUD + select de encargado + filtro por tipo
+- [x] **Habitaciones** (`HabitacionView`): CRUD con tipo/estado; funciona standalone (dropdown de albergue) **y** embebida (scopeada)
+- [x] **Beneficios** (`BeneficioView`): CRUD plano por tipo
+- [x] **Servicios** (`ServicioView`): CRUD plano por tipo + precio
+- [x] Búsqueda/filtros genéricos + enums humanizados (`utils/options`, `enum/catalog`)
+- [x] Rutas + menú (8 ítems) + páginas
+
+**Nuevo en la infra: Relation Managers (estilo Filament)**
+- `CrudView` ahora soporta `relations` (tabs de hijas en un drawer "Ver"), `summary`
+  (resumen del padre), `scopeParams` (filtro fijo del padre) y `defaults` (inyecta el
+  padre al guardar). Componente `CrudDetailDrawer`.
+- Demostrado en **Albergue → Habitaciones**: botón "Ver" abre el detalle con un tab de
+  habitaciones que hace CRUD scopeado al albergue (sin pedir el albergue en el formulario).
+  La página `/habitaciones` standalone sigue disponible.
+
+**Backend (LOCAL, sin commit) — bugs corregidos:**
+- `persona.controller` ignoraba search/filtros → ahora usa `parseSearch`/`parseSort`.
+- `habitacion` create DTO: `capacidad` tenía `@IsString()` además de `@IsInt()` → quitado.
+- `habitacion.controller`: lógica de `isDeleted` invertida (devolvía vacío) → corregida.
 
 ## ⬜ Fase 3 — Persona (entidad raíz) y sub-fichas
 - [ ] **Personas** (CRUD + buscador)
