@@ -3,7 +3,7 @@ import { useSession } from '@/hooks/useSession'
 import { queryKeys } from '@/lib/queryClient'
 import type Role from '@/models/api/entities/Role'
 import type User from '@/models/api/entities/User'
-import type { CrudField } from '@/models/app/crud'
+import type { CrudField, CrudFilter } from '@/models/app/crud'
 import { roleService, userService } from '@/services/api'
 import CrudView from '@/views/core/CrudView'
 import { Tag } from 'antd'
@@ -77,6 +77,18 @@ export default function UsersView() {
     { name: 'blocked', label: 'Bloqueado', type: 'switch' },
   ]
 
+  const filters: CrudFilter[] = [
+    { name: 'role', label: 'Rol', options: roleOptions },
+    {
+      name: 'blocked',
+      label: 'Estado',
+      options: [
+        { label: 'Activo', value: 'false' },
+        { label: 'Bloqueado', value: 'true' },
+      ],
+    },
+  ]
+
   const toFormValues = (user: User) => ({
     username: user.username,
     name: user.name,
@@ -103,6 +115,7 @@ export default function UsersView() {
       label="usuario"
       columns={columns}
       fields={fields}
+      filters={filters}
       toFormValues={toFormValues}
       toPayload={toPayload}
       canEdit={(user) => !isSelf(user)}

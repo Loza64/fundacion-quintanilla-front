@@ -13,6 +13,7 @@ export interface CrudListViewProps<Entity extends BaseEntity> {
   defaultSize?: number
   toolbar?: ReactNode
   rowActions?: (record: Entity) => ReactNode
+  extraParams?: Record<string, unknown>
 }
 
 export default function CrudListView<Entity extends BaseEntity>({
@@ -22,24 +23,33 @@ export default function CrudListView<Entity extends BaseEntity>({
   defaultSize = 15,
   toolbar,
   rowActions,
+  extraParams,
 }: CrudListViewProps<Entity>) {
-  const [params, setParams] = useState<Record<string, unknown>>({
-    search: '',
-    page: 1,
-    size: defaultSize,
-  })
+  const [pagination, setPagination] = useState({ page: 1, size: defaultSize })
+
+  const extraKey = JSON.stringify(extraParams ?? {})
+  const [prevExtraKey, setPrevExtraKey] = useState(extraKey)
+  if (extraKey !== prevExtraKey) {
+    setPrevExtraKey(extraKey)
+    setPagination((prev) => ({ ...prev, page: 1 }))
+  }
+
+  const queryParams = {
+    ...(extraParams ?? {}),
+    page: pagination.page,
+    size: pagination.size,
+  }
 
   const { data, isLoading } = useFindAll<Entity>({
     queryKey,
     service,
-    queryParams: params,
+    queryParams,
   })
 
-  const handleTableChange = (pagination: TablePaginationConfig) => {
-    setParams((prev) => ({
-      ...prev,
-      page: pagination.current ?? 1,
-      size: pagination.pageSize ?? prev.size,
+  const handleTableChange = (config: TablePaginationConfig) => {
+    setPagination((prev) => ({
+      page: config.current ?? 1,
+      size: config.pageSize ?? prev.size,
     }))
   }
 

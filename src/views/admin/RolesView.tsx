@@ -69,6 +69,7 @@ export default function RolesView() {
       service={roleService}
       queryKey={queryKeys.roles}
       label="rol"
+      searchable={false}
       columns={columns}
       fields={fields}
       toFormValues={toFormValues}

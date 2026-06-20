@@ -1,14 +1,17 @@
 import CrudFormModal from '@/components/crud/CrudFormModal'
 import useCrud from '@/hooks/core/useCrud'
+import useDebouncedValue from '@/hooks/core/useDebouncedValue'
 import type AbstractService from '@/models/api/core/AbstractService'
 import type BaseEntity from '@/models/api/core/_BaseEntity'
-import type { CrudField } from '@/models/app/crud'
+import type { CrudField, CrudFilter } from '@/models/app/crud'
 import CrudListView from '@/views/core/CrudListView'
-import { PlusOutlined } from '@ant-design/icons'
-import { Button, Popconfirm, Space } from 'antd'
+import { FilterOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons'
+import { Badge, Button, Input, Popover, Popconfirm, Select, Space } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { useState } from 'react'
 import { toast } from 'react-toastify'
+
+type FilterValue = string | number | undefined
 
 export interface CrudViewProps<Entity extends BaseEntity> {
   service: AbstractService<Entity>
@@ -16,6 +19,8 @@ export interface CrudViewProps<Entity extends BaseEntity> {
   label: string
   columns: ColumnsType<Entity>
   fields: CrudField[]
+  filters?: CrudFilter[]
+  searchable?: boolean
   toFormValues?: (entity: Entity) => Record<string, unknown>
   toPayload?: (values: Record<string, unknown>) => Partial<Entity>
   fetchOne?: (id: number) => Promise<Entity>
@@ -38,6 +43,8 @@ export default function CrudView<Entity extends BaseEntity>({
   label,
   columns,
   fields,
+  filters = [],
+  searchable = true,
   toFormValues,
   toPayload,
   fetchOne,
@@ -50,6 +57,12 @@ export default function CrudView<Entity extends BaseEntity>({
   const [editing, setEditing] = useState<Entity | null>(null)
   const [initialValues, setInitialValues] = useState<Record<string, unknown>>()
   const [loadingOne, setLoadingOne] = useState(false)
+  const [filterValues, setFilterValues] = useState<Record<string, FilterValue>>(
+    {}
+  )
+  const [searchInput, setSearchInput] = useState('')
+
+  const search = useDebouncedValue(searchInput, 350)
 
   const { create, update, softDelete, isCreating, isUpdating } =
     useCrud<Entity>({ service, queryKey })
@@ -132,11 +145,74 @@ export default function CrudView<Entity extends BaseEntity>({
     </Space>
   )
 
-  const toolbar = canCreate ? (
-    <div className="mb-3 flex justify-end">
-      <Button type="primary" icon={<PlusOutlined />} onClick={openCreate}>
-        Nuevo
-      </Button>
+  const extraParams: Record<string, unknown> = {}
+  if (searchable && search.trim()) extraParams.search = search.trim()
+  for (const [key, value] of Object.entries(filterValues)) {
+    if (value !== undefined && value !== '') extraParams[key] = value
+  }
+
+  const activeFilters = Object.values(filterValues).filter(
+    (value) => value !== undefined && value !== ''
+  ).length
+
+  const filtersPanel = (
+    <div className="flex w-60 flex-col gap-3">
+      {filters.map((filter) => (
+        <div key={filter.name} className="flex flex-col gap-1">
+          <span className="text-xs font-medium text-gray-500">
+            {filter.label}
+          </span>
+          <Select<FilterValue>
+            placeholder="Todos"
+            options={filter.options}
+            value={filterValues[filter.name]}
+            onChange={(value) =>
+              setFilterValues((prev) => ({ ...prev, [filter.name]: value }))
+            }
+            allowClear
+          />
+        </div>
+      ))}
+      {activeFilters > 0 && (
+        <Button size="small" type="text" onClick={() => setFilterValues({})}>
+          Limpiar filtros
+        </Button>
+      )}
+    </div>
+  )
+
+  const hasToolbar = searchable || filters.length > 0 || canCreate
+
+  const toolbar = hasToolbar ? (
+    <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+      <Space wrap>
+        {searchable && (
+          <Input
+            allowClear
+            prefix={<SearchOutlined className="text-gray-400" />}
+            placeholder={`Buscar ${label}...`}
+            value={searchInput}
+            onChange={(event) => setSearchInput(event.target.value)}
+            className="w-full! sm:w-80!"
+          />
+        )}
+        {filters.length > 0 && (
+          <Popover
+            content={filtersPanel}
+            trigger="click"
+            placement="bottomLeft"
+          >
+            <Badge count={activeFilters} size="small">
+              <Button icon={<FilterOutlined />}>Filtros</Button>
+            </Badge>
+          </Popover>
+        )}
+      </Space>
+      {canCreate && (
+        <Button type="primary" icon={<PlusOutlined />} onClick={openCreate}>
+          Nuevo
+        </Button>
+      )}
     </div>
   ) : null
 
@@ -148,6 +224,7 @@ export default function CrudView<Entity extends BaseEntity>({
         columns={columns}
         toolbar={toolbar}
         rowActions={rowActions}
+        extraParams={extraParams}
       />
       <CrudFormModal
         open={open}

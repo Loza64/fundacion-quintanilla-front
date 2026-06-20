@@ -29,7 +29,7 @@ export const routesConfig: Record<RoutesEnum, RouteConfig> = {
     roles: ['*'],
     permission: ['*'],
     title: 'Usuarios',
-    search: true,
+    search: false,
   },
   [RoutesEnum.ROLES]: {
     auth: true,

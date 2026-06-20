@@ -39,6 +39,7 @@ export default function PermissionsView() {
       service={permissionService}
       queryKey={queryKeys.permissions}
       label="permiso"
+      searchable={false}
       columns={columns}
       fields={fields}
       toFormValues={(permission) => ({ title: permission.title ?? '' })}

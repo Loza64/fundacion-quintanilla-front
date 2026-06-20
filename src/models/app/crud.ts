@@ -25,3 +25,9 @@ export interface CrudField {
   hideOnEdit?: boolean
   rules?: Rule[]
 }
+
+export interface CrudFilter {
+  name: string
+  label: string
+  options: CrudSelectOption[]
+}

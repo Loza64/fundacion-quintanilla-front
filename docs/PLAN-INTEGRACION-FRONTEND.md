@@ -42,6 +42,12 @@ Infra CRUD reutilizable creada y validada en navegador:
 `CrudFormModal` (formulario config-driven), `CrudListView` (lista + toolbar + acciones),
 `CrudView` (página CRUD completa: crear/editar/eliminar con soft-delete + Popconfirm).
 
+**Búsqueda y filtros genéricos** (dinámicos desde la base, validados en navegador):
+- Búsqueda: el input "Buscar" del header se conecta al param `search` del backend (debounce 350ms) en todo `CrudView`.
+- Filtros: prop `filters` declarativa (`CrudFilter[]`) → selects en el toolbar que mandan los query params tipados del módulo. Demostrado en Usuarios (Rol + Estado).
+- Convención backend: `search`/`sort`/`page`/`size` son base compartida (`BaseQuerys`); los campos de búsqueda y filtros tipados son por entidad.
+- Backend (LOCAL, sin commit): se corrigió `persona.controller` que ignoraba search/filtros; ahora usa `parseSearch`/`parseSort` como el resto.
+
 - [x] **Usuarios** — CRUD completo (`UsersView`): crear/editar/eliminar, select de rol dinámico, protección de self-action (no editarse/borrarse a sí mismo)
 - [x] **Roles** — CRUD (`RolesView`): nombre + activo + asignación de permisos (precarga vía `fetchOne`)
 - [x] **Permisos** — `PermissionsView`: listar + editar título (sin crear/eliminar)
