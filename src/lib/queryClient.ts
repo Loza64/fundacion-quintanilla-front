@@ -14,4 +14,6 @@ export const queryClient = new QueryClient({
 export const queryKeys = {
   session: ['session'],
   users: ['users'],
+  roles: ['roles'],
+  permissions: ['permissions'],
 }

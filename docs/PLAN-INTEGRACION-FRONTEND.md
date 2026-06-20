@@ -36,12 +36,20 @@
 
 ---
 
-## ⬜ Fase 1 — Núcleo de seguridad y administración
-- [ ] **Usuarios** — completar CRUD (crear/editar/detalle/eliminar; hoy solo lista)
-- [ ] **Roles** — CRUD + asignación de permisos
-- [ ] **Permisos** — listar / editar (`GET`, `GET/:id`, `PUT/:id`)
-- [ ] **Perfil** — `GET/PUT /auth/profile`
-- [ ] **Uploads** — Cloudinary (requiere credenciales reales)
+## ✅ Fase 1 — Núcleo de seguridad y administración — **COMPLETADA** (excepto Uploads)
+
+Infra CRUD reutilizable creada y validada en navegador:
+`CrudFormModal` (formulario config-driven), `CrudListView` (lista + toolbar + acciones),
+`CrudView` (página CRUD completa: crear/editar/eliminar con soft-delete + Popconfirm).
+
+- [x] **Usuarios** — CRUD completo (`UsersView`): crear/editar/eliminar, select de rol dinámico, protección de self-action (no editarse/borrarse a sí mismo)
+- [x] **Roles** — CRUD (`RolesView`): nombre + activo + asignación de permisos (precarga vía `fetchOne`)
+- [x] **Permisos** — `PermissionsView`: listar + editar título (sin crear/eliminar)
+- [x] **Perfil** — `ProfileView`: `GET/PUT /auth/profile`
+- [x] Navegación: `RoutesEnum` + `routesConfig` + menú lateral (Usuarios/Roles/Permisos/Mi perfil) con RBAC
+- [ ] **Uploads** — Cloudinary (DIFERIDO: requiere credenciales reales; `.env` del backend tiene placeholders)
+
+> Modelos corregidos de paso: `User` (faltaban `name`/`blocked`), `Permissions` (tipo erróneo), `Role` (+`active`), `RoleName` ampliado para roles arbitrarios.
 
 ## ⬜ Fase 2 — Catálogos base (sin dependencias)
 - [ ] **Albergues** → **Habitaciones**

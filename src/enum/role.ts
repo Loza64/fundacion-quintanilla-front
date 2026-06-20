@@ -4,4 +4,4 @@ export const roles = {
   all: '*',
 } as const
 
-export type RoleName = (typeof roles)[keyof typeof roles]
+export type RoleName = (typeof roles)[keyof typeof roles] | (string & {})

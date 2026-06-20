@@ -1,4 +1,4 @@
-import { Users } from 'lucide-react'
+import { CircleUser, KeyRound, Shield, Users } from 'lucide-react'
 import React from 'react'
 import type { LucideProps } from 'lucide-react'
 import type { MenuItem, SubMenuItem } from '@/models/app/menu'
@@ -12,10 +12,34 @@ export const menu: MenuItem[] = [
   {
     key: RoutesEnum.DASHBOARD,
     icon: createIcon(Users),
-    label: 'Administración',
+    label: 'Usuarios',
+    authorized: [roles.admin],
+    view: true,
+    children: [],
+  },
+  {
+    key: RoutesEnum.ROLES,
+    icon: createIcon(Shield),
+    label: 'Roles',
+    authorized: [roles.admin],
+    view: true,
+    children: [],
+  },
+  {
+    key: RoutesEnum.PERMISSIONS,
+    icon: createIcon(KeyRound),
+    label: 'Permisos',
+    authorized: [roles.admin],
+    view: true,
+    children: [],
+  },
+  {
+    key: RoutesEnum.PROFILE,
+    icon: createIcon(CircleUser),
+    label: 'Mi perfil',
     authorized: [roles.all],
     view: true,
-    children: [], // submenus
+    children: [],
   },
 ]
 

@@ -3,6 +3,7 @@ import type AbstractService from '@/models/api/core/AbstractService'
 import type BaseEntity from '@/models/api/core/_BaseEntity'
 import { Table } from 'antd'
 import type { ColumnsType, TablePaginationConfig } from 'antd/es/table'
+import type { ReactNode } from 'react'
 import { useState } from 'react'
 
 export interface CrudListViewProps<Entity extends BaseEntity> {
@@ -10,6 +11,8 @@ export interface CrudListViewProps<Entity extends BaseEntity> {
   queryKey: string | string[]
   columns: ColumnsType<Entity>
   defaultSize?: number
+  toolbar?: ReactNode
+  rowActions?: (record: Entity) => ReactNode
 }
 
 export default function CrudListView<Entity extends BaseEntity>({
@@ -17,6 +20,8 @@ export default function CrudListView<Entity extends BaseEntity>({
   queryKey,
   columns,
   defaultSize = 15,
+  toolbar,
+  rowActions,
 }: CrudListViewProps<Entity>) {
   const [params, setParams] = useState<Record<string, unknown>>({
     search: '',
@@ -38,20 +43,35 @@ export default function CrudListView<Entity extends BaseEntity>({
     }))
   }
 
+  const tableColumns: ColumnsType<Entity> = rowActions
+    ? [
+        ...columns,
+        {
+          title: 'Acciones',
+          key: 'actions',
+          align: 'center',
+          render: (_, record) => rowActions(record),
+        },
+      ]
+    : columns
+
   return (
-    <Table<Entity>
-      columns={columns}
-      dataSource={data?.data}
-      loading={isLoading}
-      rowKey="id"
-      pagination={{
-        current: data?.pagination.page ?? 1,
-        pageSize: data?.pagination.pageSize,
-        total: data?.pagination.total ?? 0,
-        showSizeChanger: true,
-        position: ['bottomCenter'],
-      }}
-      onChange={handleTableChange}
-    />
+    <div>
+      {toolbar}
+      <Table<Entity>
+        columns={tableColumns}
+        dataSource={data?.data}
+        loading={isLoading}
+        rowKey="id"
+        pagination={{
+          current: data?.pagination.page ?? 1,
+          pageSize: data?.pagination.pageSize,
+          total: data?.pagination.total ?? 0,
+          showSizeChanger: true,
+          position: ['bottomCenter'],
+        }}
+        onChange={handleTableChange}
+      />
+    </div>
   )
 }

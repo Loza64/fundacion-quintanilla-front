@@ -4,5 +4,6 @@ import BaseEntity from '../core/_BaseEntity'
 
 export default interface Role extends BaseEntity {
   name: RoleName
+  active?: boolean
   permissions?: Permissions[]
 }
