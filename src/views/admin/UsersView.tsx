@@ -1,5 +1,6 @@
 import { useFindAll } from '@/hooks/core/useFindAll'
 import { useSession } from '@/hooks/useSession'
+import { roles } from '@/enum/role'
 import { queryKeys } from '@/lib/queryClient'
 import type Role from '@/models/api/entities/Role'
 import type User from '@/models/api/entities/User'
@@ -11,6 +12,7 @@ import type { ColumnsType } from 'antd/es/table'
 
 export default function UsersView() {
   const { profile } = useSession()
+  const isSuperAdmin = profile?.role?.name === roles.superAdmin
 
   const { data: rolesData } = useFindAll<Role>({
     queryKey: queryKeys.roles,
@@ -18,10 +20,15 @@ export default function UsersView() {
     queryParams: { page: 1, size: 100 },
   })
 
-  const roleOptions = (rolesData?.data ?? []).map((role) => ({
-    label: role.name,
-    value: role.id ?? 0,
-  }))
+  const allRoles = rolesData?.data ?? []
+  const encargadoRoleId = allRoles.find((role) => role.name === 'ENCARGADO')?.id
+
+  // El SUPER_ADMIN gestiona todos los usuarios; el ADMIN solo los ENCARGADO.
+  const roleOptions = (
+    isSuperAdmin
+      ? allRoles
+      : allRoles.filter((role) => role.name === 'ENCARGADO')
+  ).map((role) => ({ label: role.name, value: role.id ?? 0 }))
 
   const columns: ColumnsType<User> = [
     { title: 'ID', dataIndex: 'id', key: 'id', align: 'center' },
@@ -66,19 +73,26 @@ export default function UsersView() {
       hideOnEdit: true,
       rules: [{ min: 6, message: 'Mínimo 6 caracteres' }],
     },
-    {
-      name: 'role',
-      label: 'Rol',
-      type: 'select',
-      required: true,
-      options: roleOptions,
-      placeholder: 'Selecciona un rol',
-    },
+    // El admin solo crea ENCARGADO (rol fijo); el super admin elige el rol.
+    ...(isSuperAdmin
+      ? [
+          {
+            name: 'role',
+            label: 'Rol',
+            type: 'select' as const,
+            required: true,
+            options: roleOptions,
+            placeholder: 'Selecciona un rol',
+          },
+        ]
+      : []),
     { name: 'blocked', label: 'Bloqueado', type: 'switch' },
   ]
 
   const filters: CrudFilter[] = [
-    { name: 'role', label: 'Rol', options: roleOptions },
+    ...(isSuperAdmin
+      ? [{ name: 'role', label: 'Rol', options: roleOptions }]
+      : []),
     {
       name: 'blocked',
       label: 'Estado',
@@ -94,7 +108,7 @@ export default function UsersView() {
     name: user.name,
     surname: user.surname,
     email: user.email,
-    role: user.role?.id,
+    ...(isSuperAdmin ? { role: user.role?.id } : {}),
     blocked: user.blocked ?? false,
   })
 
@@ -120,6 +134,16 @@ export default function UsersView() {
       toPayload={toPayload}
       canEdit={(user) => !isSelf(user)}
       canDelete={(user) => !isSelf(user)}
+      scopeParams={
+        isSuperAdmin || encargadoRoleId == null
+          ? undefined
+          : { role: encargadoRoleId }
+      }
+      defaults={
+        isSuperAdmin || encargadoRoleId == null
+          ? undefined
+          : { role: { id: encargadoRoleId } }
+      }
     />
   )
 }

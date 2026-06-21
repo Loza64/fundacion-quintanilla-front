@@ -15,6 +15,9 @@
     "prettier:fix": "prettier --write \"**/*.ts\" \"**/*.tsx\"",
     "check-types": "tsc --noemit",
     "preview": "vite preview",
+    "test:e2e": "playwright test",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:report": "playwright show-report",
     "prepare": "node checkHusky.js"
   },
   "lint-staged": {
@@ -48,6 +51,7 @@
     "@commitlint/cli": "^20.3.0",
     "@commitlint/config-conventional": "^20.3.0",
     "@eslint/js": "^9.39.1",
+    "@playwright/test": "^1.61.0",
     "@tailwindcss/postcss": "^4.1.17",
     "@tanstack/react-query-devtools": "^5.91.2",
     "@types/crypto-js": "^4.2.2",

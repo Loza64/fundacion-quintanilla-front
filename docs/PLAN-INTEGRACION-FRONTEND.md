@@ -162,6 +162,27 @@ igual que los del formulario (que ya la tenían).
 > Todos los cambios de backend están consolidados en `CAMBIOS-BACKEND-PARA-PR.md` (en el repo
 > del backend, local) para entregarlos como una sola PR al final.
 
+## ✅ Fase 8 (bonus) — Tests E2E (Playwright) + 3 roles
+
+- [x] **Playwright** configurado con grabación de video (`pnpm test:e2e`), `webServer` con
+  `reuseExistingServer`, buenas prácticas (locators accesibles, web-first assertions, `test.step`).
+- [x] **Specs**: `admin.spec` (recorrido completo), `encargado.spec` (mi albergue + RBAC + búsqueda),
+  `superadmin.spec` (gestiona todos los usuarios). Los 3 pasan. Videos en `e2e-results/`.
+- [x] **3 roles**: SUPER_ADMIN, ADMIN, ENCARGADO.
+  - SUPER_ADMIN: acceso total, gestiona **todos** los usuarios.
+  - ADMIN: todos los albergues, gestiona **solo** usuarios ENCARGADO (filtro + rol fijo en el alta).
+  - ENCARGADO: solo su albergue.
+  - Frontend listo (RBAC trata SUPER_ADMIN como acceso total); backend: rol SUPER_ADMIN sembrado (local).
+
+## 🧩 Patrones reutilizables (documentados)
+
+- **CRUD genérico** (`CrudView`): lista + form config-driven + búsqueda + filtros + soft-delete.
+- **Relation managers** anidables (`relations` + `scopeParams`/`defaults`): tabs de hijas con CRUD
+  scopeado al padre, hasta N niveles (validado a 3).
+- **Búsqueda anidada** (helper `parseSearch` con rutas con punto, ej. `expediente.persona.nombres`):
+  patrón disponible para cualquier controlador; aplicado **solo** en la tabla de residentes (que es
+  donde tiene sentido buscar por el nombre de la persona).
+
 ---
 
 ## Grafo de dependencias (referencia)

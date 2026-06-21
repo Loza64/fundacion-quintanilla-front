@@ -1,4 +1,5 @@
 export const roles = {
+  superAdmin: 'SUPER_ADMIN',
   admin: 'ADMIN',
   encargado: 'ENCARGADO',
   all: '*',

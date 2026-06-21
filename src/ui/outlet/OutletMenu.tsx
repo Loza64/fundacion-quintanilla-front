@@ -1,6 +1,6 @@
 import { menu, selectItemMenu, selectSubItemMenu } from '@/config/menu'
 import { searchRecoil } from '@/constants/recoil'
-import type { RoleName } from '@/enum/role'
+import { roles, type RoleName } from '@/enum/role'
 import useRecoilStorage from '@/hooks/core/useRecoilStorage'
 import { useSession } from '@/hooks/useSession'
 import type { MenuItem, SubMenuItem } from '@/models/app/menu'
@@ -51,9 +51,11 @@ export default function OutletMenu({
       role: RoleName,
       collapsed: boolean
     ): MenuProps['items'] => {
+      const isSuperAdmin = role === roles.superAdmin
       return menu
         .filter(
           (item) =>
+            isSuperAdmin ||
             item.authorized.includes(role) ||
             item.authorized.includes('*') ||
             item.children.some(
@@ -67,6 +69,7 @@ export default function OutletMenu({
           const children = item.children
             .filter(
               (c) =>
+                isSuperAdmin ||
                 c.authorized.includes(role) ||
                 (c.authorized.includes('*') && c.view)
             )
