@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test'
-import { login, beat } from './helpers'
+import { login, beat, go } from './helpers'
 
-test('Tour Encargado — su albergue, búsqueda y RBAC', async ({ page }) => {
+test('Tour Encargado — su albergue, residentes y RBAC', async ({ page }) => {
   await test.step('Iniciar sesión como encargado', async () => {
     await login(page, 'encargado1', 'encargado123')
     await expect(page).toHaveURL(/\/encargado/)
@@ -26,20 +26,40 @@ test('Tour Encargado — su albergue, búsqueda y RBAC', async ({ page }) => {
     await beat(page)
   })
 
-  await test.step('Abrir el detalle del residente (historial e ingresos)', async () => {
+  await test.step('Detalle del residente y sus fichas', async () => {
     await page.getByRole('button', { name: 'Ver' }).first().click()
-    await expect(page.getByRole('tab', { name: 'Historial' })).toBeVisible()
-    await expect(page.getByRole('tab', { name: 'Ingresos' })).toBeVisible()
-    await page.getByRole('tab', { name: 'Historial' }).click()
+    for (const tab of ['Historial', 'Ingresos', 'Egresos', 'Servicios']) {
+      await expect(page.getByRole('tab', { name: tab })).toBeVisible()
+    }
+    await page.getByRole('tab', { name: 'Ingresos' }).click()
+    await beat(page)
+    await page.getByRole('tab', { name: 'Servicios' }).click()
     await beat(page)
     await page.keyboard.press('Escape')
   })
 
+  await test.step('Editar un residente (permiso de escritura del encargado)', async () => {
+    await page.getByRole('button', { name: 'Editar' }).first().click()
+    await expect(page.getByRole('dialog')).toBeVisible()
+    await page
+      .getByTestId('residente-field-motivo_ingreso')
+      .fill('Actualizado por el encargado en el tour E2E')
+    await page.getByTestId('residente-form-submit').click()
+    await expect(page.getByRole('dialog')).toBeHidden()
+    await beat(page)
+  })
+
   await test.step('RBAC: el encargado no entra a rutas de admin', async () => {
-    await page.goto('/dashboard')
+    await go(page, '/dashboard')
     await expect(
       page.getByText('No tienes permiso para acceder a esta área')
     ).toBeVisible()
+    await beat(page)
+  })
+
+  await test.step('Cierre en su perfil', async () => {
+    await go(page, '/perfil')
+    await expect(page.getByLabel('Usuario')).toHaveValue('encargado1')
     await beat(page)
   })
 })

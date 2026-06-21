@@ -1,69 +1,52 @@
 # Tests E2E (Playwright)
 
-Tours end-to-end del frontend, siguiendo buenas prácticas de Playwright:
-selectores estables `data-testid` (`getByTestId`) en los componentes reutilizables,
-web-first assertions (con auto-retry), `test.step` para legibilidad y narración del video,
-y espera de respuestas de red en vez de timeouts fijos.
+Tours end-to-end por rol, pensados como **demostraciones deterministas** de la
+funcionalidad: login, navegación por todos los módulos, ver/buscar, crear, editar,
+relation managers y RBAC. Selectores estables `data-testid` + roles accesibles.
 
 ## Cómo correrlos
 
 ```bash
 pnpm test:e2e          # rápido, sin pausas (local / CI)
-pnpm test:e2e:tour     # pausado y demostrativo (genera videos lentos)
+pnpm test:e2e:tour     # pausado y demostrativo (genera videos)
 pnpm test:e2e:headed   # con navegador visible
-pnpm test:e2e:report   # abre el reporte HTML
+pnpm test:e2e:report   # reporte HTML
 ```
 
-Los videos quedan en `e2e-results/<nombre-del-test>/video.webm`.
-
-## Ritmo configurable (mismo test, video o CI)
-
-El ritmo entre acciones se controla por variables de entorno, así el **mismo** test sirve
-para grabar videos pausados y para correr rápido en CI:
-
-| Var | Efecto | Default |
-|-----|--------|---------|
-| `E2E_SLOWMO` | `slowMo` de Playwright: retarda cada acción N ms | `0` |
-| `E2E_PACE` | pausa extra en puntos clave del recorrido (`beat()` en `helpers.ts`) | `0` |
-
-`pnpm test:e2e:tour` define `E2E_SLOWMO=400 E2E_PACE=1100`. En local/CI ambos valen `0`.
+Videos en `e2e-results/<test>/video.webm`. Ritmo configurable por env:
+`E2E_SLOWMO` (slowMo por acción) y `E2E_PACE` (pausa en puntos clave); `test:e2e:tour`
+los sube. En local/CI valen 0 → tests rápidos.
 
 ## Selectores `data-testid`
 
-Los componentes CRUD reutilizables exponen testids estables, así toda pantalla los hereda:
+Los componentes CRUD reutilizables los exponen, así toda pantalla los hereda:
 
 | testid | dónde |
 |--------|-------|
 | `login-username` / `login-password` / `login-submit` | login |
-| `<entidad>-search` / `<entidad>-new` / `<entidad>-filters` | toolbar de cada CRUD |
+| `<entidad>-search` / `<entidad>-new` / `<entidad>-filters` | toolbar |
 | `<entidad>-view-<id>` / `<entidad>-edit-<id>` / `<entidad>-delete-<id>` | acciones por fila |
-| `<entidad>-delete-confirm` | confirmación de borrado |
-| `<entidad>-field-<campo>` | inputs del formulario |
-| `<entidad>-form-submit` / `<entidad>-form-cancel` | guardar / cancelar del modal |
+| `<entidad>-filter-<campo>` | selects de filtro |
+| `<entidad>-field-<campo>` / `<entidad>-form-submit` | formulario |
 
-`<entidad>` deriva del `label` del CRUD (o de la prop `testId`).
+## Qué cubren los tours
 
-## Prerequisitos
+| Spec | Recorrido |
+|------|-----------|
+| `superadmin.spec.ts` | Ve todos los usuarios → crear (eligiendo rol) → editar → buscar → Roles/Permisos → Albergues → catálogos (alta de servicio) → Personas → Expedientes → Residentes (búsqueda anidada + detalle) → Recibos → Reportes → Perfil |
+| `admin.spec.ts` | Usuarios solo-encargados → crear/editar/buscar → Albergues → catálogos → Personas → Residentes → Reportes → Perfil |
+| `encargado.spec.ts` | Su albergue → búsqueda por persona → detalle del residente → editar residente (escritura) → RBAC denegado → Perfil |
 
-- **Backend** corriendo en `http://localhost:4000` (repo `fundacion-quintanilla-back`).
-- **Frontend**: Playwright lo levanta solo (`webServer` con `reuseExistingServer`) en `:5180`.
-- **Datos sembrados** que esperan los tours:
-  - Usuarios: `admin` / `admin123` (ADMIN), `encargado1` / `encargado123` (ENCARGADO),
-    `superadmin` / `superadmin123` (SUPER ADMIN).
-  - `encargado1` asignado a un albergue ("Albergue Central") con al menos un residente
-    (Juan Pérez).
+Los registros de prueba (`e2e_*`) se limpian por API en `afterEach` (`cleanupTestData`).
 
-## Tours
+## Limitaciones conocidas de Ant Design
 
-| Spec | Qué demuestra |
-|------|----------------|
-| `admin.spec.ts` | Login admin → usuarios (solo encargados) → **alta + baja real** de un encargado → albergues (relation managers) → personas (sub-fichas) → residentes (búsqueda anidada) → reportes |
-| `encargado.spec.ts` | Login encargado → su albergue + residentes → búsqueda por persona → detalle con historial → RBAC (sin acceso a rutas de admin) |
-| `superadmin.spec.ts` | El super admin ve y gestiona TODOS los usuarios y puede elegir el rol al crear |
+Dos interacciones quedan **fuera** de los tours por ser inestables por la naturaleza de
+AntD (overlays en portales + reposicionamiento), no por Playwright:
 
-## Roles (RBAC)
+- **Eliminar (Popconfirm)**: el botón de confirmación vive en un portal que anima y se
+  reposiciona. Se valida a nivel de API/servicio.
+- **Filtrar (Select dentro de Popover)**: el dropdown en portal cierra el popover o entra
+  en loop de re-render. El tour solo abre el panel de filtros.
 
-- **SUPER ADMIN**: acceso total; gestiona todos los usuarios. (El backend lo identifica por
-  nombre en el guard, con acceso absoluto.)
-- **ADMIN**: acceso a todos los albergues; gestiona solo usuarios ENCARGADO.
-- **ENCARGADO**: solo su albergue asignado y sus residentes.
+Todo lo demás (modales, drawers, tabs, búsqueda) es estable con el auto-wait de Playwright.

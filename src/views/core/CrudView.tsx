@@ -212,6 +212,7 @@ export default function CrudView<Entity extends BaseEntity>({
             showSearch
             optionFilterProp="label"
             allowClear
+            data-testid={`${tid}-filter-${filter.name}`}
           />
         </div>
       ))}
