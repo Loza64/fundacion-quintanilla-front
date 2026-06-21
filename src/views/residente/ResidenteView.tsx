@@ -17,6 +17,7 @@ import {
 } from '@/services/api'
 import { enumOptions, humanize } from '@/utils/options'
 import CrudView from '@/views/core/CrudView'
+import HistorialExpedienteView from '@/views/expediente/HistorialExpedienteView'
 import ReciboView from '@/views/finanzas/ReciboView'
 import AsignacionHabitacionView from '@/views/residente/AsignacionHabitacionView'
 import EgresoView from '@/views/residente/EgresoView'
@@ -28,10 +29,15 @@ import type { ColumnsType } from 'antd/es/table'
 
 export default function ResidenteView({
   scopeExpedienteId,
+  scopeAlbergueId,
+  restricted = false,
 }: {
   scopeExpedienteId?: number
+  scopeAlbergueId?: number
+  restricted?: boolean
 }) {
-  const scoped = scopeExpedienteId != null
+  const scopedExp = scopeExpedienteId != null
+  const scopedAlb = scopeAlbergueId != null
 
   const { data: alberguesData } = useFindAll<Albergue>({
     queryKey: queryKeys.albergues,
@@ -60,11 +66,31 @@ export default function ResidenteView({
   const columns: ColumnsType<Residente> = [
     { title: 'ID', dataIndex: 'id', key: 'id', align: 'center' },
     {
-      title: 'Albergue',
-      dataIndex: ['albergue', 'nombre'],
-      key: 'albergue',
+      title: 'Persona',
+      key: 'persona',
       align: 'center',
+      render: (_, record) =>
+        record.expediente?.persona
+          ? `${record.expediente.persona.nombres} ${record.expediente.persona.apellidos}`
+          : '—',
     },
+    {
+      title: 'Documento',
+      key: 'documento',
+      align: 'center',
+      render: (_, record) =>
+        record.expediente?.persona?.documento_identificacion || '—',
+    },
+    ...(scopedAlb
+      ? []
+      : [
+          {
+            title: 'Albergue',
+            dataIndex: ['albergue', 'nombre'],
+            key: 'albergue',
+            align: 'center' as const,
+          },
+        ]),
     {
       title: 'Tipo',
       dataIndex: 'tipo_residente',
@@ -86,7 +112,7 @@ export default function ResidenteView({
   ]
 
   const fields: CrudField[] = [
-    ...(scoped
+    ...(scopedExp
       ? []
       : [
           {
@@ -97,13 +123,17 @@ export default function ResidenteView({
             options: expedienteOptions,
           },
         ]),
-    {
-      name: 'albergue',
-      label: 'Albergue',
-      type: 'select',
-      required: true,
-      options: albergueOptions,
-    },
+    ...(scopedAlb
+      ? []
+      : [
+          {
+            name: 'albergue',
+            label: 'Albergue',
+            type: 'select' as const,
+            required: true,
+            options: albergueOptions,
+          },
+        ]),
     {
       name: 'tipo_residente',
       label: 'Tipo de residente',
@@ -122,13 +152,19 @@ export default function ResidenteView({
   ]
 
   const filters: CrudFilter[] = [
-    ...(scoped
+    ...(scopedAlb
       ? []
       : [{ name: 'albergue', label: 'Albergue', options: albergueOptions }]),
     { name: 'tipo_residente', label: 'Tipo', options: tipoOptions },
   ]
 
   const summary = (residente: Residente): CrudSummaryItem[] => [
+    {
+      label: 'Persona',
+      value: residente.expediente?.persona
+        ? `${residente.expediente.persona.nombres} ${residente.expediente.persona.apellidos}`
+        : '—',
+    },
     {
       label: 'Tipo de residente',
       value: humanize(residente.tipo_residente),
@@ -148,6 +184,15 @@ export default function ResidenteView({
   ]
 
   const relations: RelationTab<Residente>[] = [
+    {
+      key: 'historial',
+      label: 'Historial',
+      render: (residente) => (
+        <HistorialExpedienteView
+          scopeExpedienteId={residente.expediente?.id ?? 0}
+        />
+      ),
+    },
     {
       key: 'ingresos',
       label: 'Ingresos',
@@ -198,13 +243,15 @@ export default function ResidenteView({
       queryKey={queryKeys.residentes}
       label="residente"
       searchable={false}
+      canCreate={!restricted}
+      canDelete={() => !restricted}
       columns={columns}
       fields={fields}
       filters={filters}
       fetchOne={(id) => residenteService.findById({ id })}
       toFormValues={(residente) => ({
-        ...(scoped ? {} : { expediente: residente.expediente?.id }),
-        albergue: residente.albergue?.id,
+        ...(scopedExp ? {} : { expediente: residente.expediente?.id }),
+        ...(scopedAlb ? {} : { albergue: residente.albergue?.id }),
         tipo_residente: residente.tipo_residente,
         fecha_ingreso: residente.fecha_ingreso,
         motivo_ingreso: residente.motivo_ingreso,
@@ -213,15 +260,21 @@ export default function ResidenteView({
       toPayload={(values) => {
         const { expediente, albergue, ...rest } = values
         const payload: Record<string, unknown> = { ...rest }
-        if (!scoped && expediente != null)
+        if (!scopedExp && expediente != null)
           payload.expediente = { id: expediente }
-        if (albergue != null) payload.albergue = { id: albergue }
+        if (!scopedAlb && albergue != null) payload.albergue = { id: albergue }
         return payload as Partial<Residente>
       }}
       summary={summary}
       relations={relations}
-      scopeParams={scoped ? { expediente: scopeExpedienteId } : undefined}
-      defaults={scoped ? { expediente: { id: scopeExpedienteId } } : undefined}
+      scopeParams={{
+        ...(scopedExp ? { expediente: scopeExpedienteId } : {}),
+        ...(scopedAlb ? { albergue: scopeAlbergueId } : {}),
+      }}
+      defaults={{
+        ...(scopedExp ? { expediente: { id: scopeExpedienteId } } : {}),
+        ...(scopedAlb ? { albergue: { id: scopeAlbergueId } } : {}),
+      }}
     />
   )
 }

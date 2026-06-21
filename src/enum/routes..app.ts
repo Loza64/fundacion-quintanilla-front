@@ -13,5 +13,6 @@ export enum RoutesEnum {
   RESIDENTES = '/residentes',
   RECIBOS = '/recibos',
   REPORTES = '/reportes',
+  ENCARGADO = '/encargado',
   PROFILE = '/perfil',
 }

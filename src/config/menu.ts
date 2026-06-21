@@ -6,6 +6,7 @@ import {
   Contact,
   FolderOpen,
   Gift,
+  Home,
   HousePlus,
   KeyRound,
   Receipt,
@@ -23,6 +24,14 @@ export const createIcon = (IconComponent: React.ComponentType<LucideProps>) =>
   React.createElement(IconComponent)
 
 export const menu: MenuItem[] = [
+  {
+    key: RoutesEnum.ENCARGADO,
+    icon: createIcon(Home),
+    label: 'Mi albergue',
+    authorized: [roles.encargado],
+    view: true,
+    children: [],
+  },
   {
     key: RoutesEnum.DASHBOARD,
     icon: createIcon(Users),

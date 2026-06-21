@@ -138,10 +138,29 @@ igual que los del formulario (que ya la tenían).
 > endpoint de reportes en el backend). Posible extensión futura: exportar a CSV/PDF.
 > Sin cambios de backend en esta fase.
 
-## ⬜ Fase 7 — Vista del rol Encargado
-- [ ] Dashboard acotado: su albergue asignado, sus residentes
-- [ ] Actualizar estado activo/inactivo de residentes
-- [ ] Registrar / consultar historial
+## ✅ Fase 7 — Vista del rol Encargado — **COMPLETADA**
+
+- [x] **EncargadoView** (`/encargado`): "Mi albergue" (su albergue asignado) + sus residentes
+- [x] Residentes scopeados por albergue (modo `restricted`: sin crear/eliminar)
+- [x] Actualizar estado activo/inactivo → vía Editar del residente
+- [x] Registrar/consultar historial → tab **Historial** en el detalle del residente
+  (`ResidenteView` ahora tiene scope por albergue + tab Historial + columna **Persona**)
+
+**RBAC real activado:**
+- Redirect por rol al iniciar sesión (ENCARGADO → `/encargado`, ADMIN → `/dashboard`)
+- Menú filtrado por rol (el encargado solo ve "Mi albergue" y "Mi perfil")
+- Guard de rutas activado en `OutletContainer` (encargado → 401 en rutas de admin)
+- Validado en navegador con ambos usuarios (admin y encargado1)
+
+**Backend (LOCAL, sin commit) — bugs corregidos:**
+- `UserService.create/update` no hasheaba el password → usuarios creados por la UI no podían
+  loguearse. Ahora hashea con bcrypt.
+- `UserService.update` borraba `role`/`albergue` (default de clase `= null` al guardar sin
+  relaciones) → cualquier update de usuario le borraba el rol. Ahora carga relaciones.
+- `residente` no cargaba `expediente.persona` → ahora sí (para mostrar el nombre).
+
+> Todos los cambios de backend están consolidados en `CAMBIOS-BACKEND-PARA-PR.md` (en el repo
+> del backend, local) para entregarlos como una sola PR al final.
 
 ---
 

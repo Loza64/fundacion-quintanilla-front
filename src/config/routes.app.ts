@@ -12,7 +12,7 @@ type RouteConfig = {
 export const routesConfig: Record<RoutesEnum, RouteConfig> = {
   [RoutesEnum.ROOT]: {
     auth: true,
-    roles: [],
+    roles: ['*'],
     permission: ['*'],
     title: 'Inicio',
     search: false,
@@ -26,7 +26,7 @@ export const routesConfig: Record<RoutesEnum, RouteConfig> = {
   },
   [RoutesEnum.DASHBOARD]: {
     auth: true,
-    roles: ['*'],
+    roles: ['ADMIN'],
     permission: ['*'],
     title: 'Usuarios',
     search: false,
@@ -106,6 +106,13 @@ export const routesConfig: Record<RoutesEnum, RouteConfig> = {
     roles: ['ADMIN'],
     permission: ['*'],
     title: 'Reportes',
+    search: false,
+  },
+  [RoutesEnum.ENCARGADO]: {
+    auth: true,
+    roles: ['ENCARGADO', 'ADMIN'],
+    permission: ['*'],
+    title: 'Mi albergue',
     search: false,
   },
   [RoutesEnum.PROFILE]: {

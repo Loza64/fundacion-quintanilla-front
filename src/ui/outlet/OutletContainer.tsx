@@ -62,8 +62,7 @@ export default function OutletContainer({
 
   if (!findRoute.auth) return children
 
-  console.log({ allowed, user })
-  //if (!allowed) return <ForbiddenView />
+  if (user && !allowed) return <ForbiddenView />
 
   return (
     <>
