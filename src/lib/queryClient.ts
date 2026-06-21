@@ -26,4 +26,7 @@ export const queryKeys = {
   situacionAcademica: ['situacion-academica'],
   economia: ['economias'],
   personaBeneficio: ['persona-beneficio'],
+  expedientes: ['expedientes'],
+  historialExpediente: ['historial-expediente'],
+  valoracionProfesional: ['valoracion-profesional'],
 }

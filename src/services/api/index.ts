@@ -10,6 +10,9 @@ import SituacionLaboral from '@/models/api/entities/SituacionLaboral'
 import SituacionAcademica from '@/models/api/entities/SituacionAcademica'
 import Economia from '@/models/api/entities/Economia'
 import PersonaBeneficio from '@/models/api/entities/PersonaBeneficio'
+import Expediente from '@/models/api/entities/Expediente'
+import HistorialExpediente from '@/models/api/entities/HistorialExpediente'
+import ValoracionProfesional from '@/models/api/entities/ValoracionProfesional'
 import Service from '../core/Service'
 import UserService from './custom/UserService'
 
@@ -42,4 +45,13 @@ export const situacionAcademicaService = new Service<SituacionAcademica>({
 export const economiaService = new Service<Economia>({ endpoint: 'economias' })
 export const personaBeneficioService = new Service<PersonaBeneficio>({
   endpoint: 'persona-beneficio',
+})
+export const expedienteService = new Service<Expediente>({
+  endpoint: 'expedientes',
+})
+export const historialExpedienteService = new Service<HistorialExpediente>({
+  endpoint: 'historial-expediente',
+})
+export const valoracionProfesionalService = new Service<ValoracionProfesional>({
+  endpoint: 'valoracion-profesional',
 })

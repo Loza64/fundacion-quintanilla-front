@@ -114,3 +114,35 @@ export const ESTADO_ACADEMICO = [
 ] as const
 
 export const TIPO_ECONOMIA = ['INGRESO', 'EGRESO'] as const
+
+export const ESTADO_EXPEDIENTE = [
+  'ABIERTO',
+  'EN_REVISION',
+  'ACTIVO',
+  'SUSPENDIDO',
+  'CERRADO',
+  'ARCHIVADO',
+] as const
+
+export const NIVEL_RIESGO = ['BAJO', 'MEDIO', 'ALTO', 'CRITICO'] as const
+
+export const TIPO_EVENTO_EXPEDIENTE = [
+  'CREACION',
+  'ACTUALIZACION',
+  'CAMBIO_ESTADO',
+  'VALORACION',
+  'ASIGNACION',
+  'CIERRE',
+  'RESTAURACION',
+  'OTRO',
+] as const
+
+export const ESPECIALIDAD_PROFESIONAL = [
+  'MEDICINA_GENERAL',
+  'PSICOLOGIA',
+  'PSIQUIATRIA',
+  'TRABAJO_SOCIAL',
+  'ENFERMERIA',
+  'NUTRICION',
+  'OTRO',
+] as const

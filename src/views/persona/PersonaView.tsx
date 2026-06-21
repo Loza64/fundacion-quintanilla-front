@@ -10,6 +10,7 @@ import type {
 import { personaService } from '@/services/api'
 import { enumOptions, humanize } from '@/utils/options'
 import CrudView from '@/views/core/CrudView'
+import ExpedienteView from '@/views/expediente/ExpedienteView'
 import EconomiaView from '@/views/persona/EconomiaView'
 import GrupoFamiliarView from '@/views/persona/GrupoFamiliarView'
 import PersonaBeneficioView from '@/views/persona/PersonaBeneficioView'
@@ -133,6 +134,11 @@ export default function PersonaView() {
   ]
 
   const relations: RelationTab<Persona>[] = [
+    {
+      key: 'expediente',
+      label: 'Expediente',
+      render: (persona) => <ExpedienteView scopePersonaId={persona.id ?? 0} />,
+    },
     {
       key: 'grupo-familiar',
       label: 'Grupo familiar',

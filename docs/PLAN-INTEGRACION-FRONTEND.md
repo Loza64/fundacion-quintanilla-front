@@ -93,10 +93,23 @@ Infra CRUD reutilizable creada y validada en navegador:
 **Backend (LOCAL, sin commit) — bug corregido:**
 - `economia` no tenía filtro `persona` (querys + controller) → agregado para el scoping.
 
-## ⬜ Fase 4 — Expediente
-- [ ] **Expedientes** (1–1 con persona)
-- [ ] Historial de expediente (timeline)
-- [ ] Valoración profesional
+## ✅ Fase 4 — Expediente — **COMPLETADA**
+
+- [x] **Expedientes** (`ExpedienteView`): standalone + scopeado en Persona (tab Expediente)
+- [x] **Historial de expediente** (relation manager scopeado por expediente)
+- [x] **Valoración profesional** (relation manager scopeado por expediente)
+
+**Relation managers ANIDADOS (2 niveles) validados en navegador:**
+`Persona → Ver → tab Expediente → Ver → drawer anidado con tabs Historial/Valoraciones`.
+Los drawers de Ant Design se apilan correctamente; el CRUD scopeado funciona en cada nivel
+(creé un evento de historial desde el nivel más profundo). La infra soporta N niveles porque
+cada tab hija es un `CrudView` que a su vez acepta `relations`.
+
+**Backend (LOCAL, sin commit) — bugs corregidos:**
+- `Expediente.persona` (OneToOne) NO tenía `@JoinColumn` → el módulo expediente **siempre daba 500**.
+  Agregado `@JoinColumn({ name: 'persona_id' })` (synchronize creó la columna + FK).
+- `expediente` no tenía filtro `persona` → agregado (querys + controller).
+- `historial-expediente` y `grupo-familiar`: lógica `isDeleted` invertida (listas vacías) → corregida.
 
 ## ⬜ Fase 5 — Residentes y operativa
 - [ ] **Residentes** (→ Expediente + Albergue)

@@ -80,6 +80,13 @@ export const routesConfig: Record<RoutesEnum, RouteConfig> = {
     title: 'Personas',
     search: false,
   },
+  [RoutesEnum.EXPEDIENTES]: {
+    auth: true,
+    roles: ['ADMIN'],
+    permission: ['*'],
+    title: 'Expedientes',
+    search: false,
+  },
   [RoutesEnum.PROFILE]: {
     auth: true,
     roles: ['*'],
