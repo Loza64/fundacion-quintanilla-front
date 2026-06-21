@@ -17,6 +17,7 @@ import {
 } from '@/services/api'
 import { enumOptions, humanize } from '@/utils/options'
 import CrudView from '@/views/core/CrudView'
+import ReciboView from '@/views/finanzas/ReciboView'
 import AsignacionHabitacionView from '@/views/residente/AsignacionHabitacionView'
 import EgresoView from '@/views/residente/EgresoView'
 import HorarioPupilajeView from '@/views/residente/HorarioPupilajeView'
@@ -180,6 +181,13 @@ export default function ResidenteView({
       label: 'Servicios',
       render: (residente) => (
         <ResidenteServicioView scopeResidenteId={residente.id ?? 0} />
+      ),
+    },
+    {
+      key: 'recibos',
+      label: 'Recibos',
+      render: (residente) => (
+        <ReciboView scopeResidenteId={residente.id ?? 0} />
       ),
     },
   ]

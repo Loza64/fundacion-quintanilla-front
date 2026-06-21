@@ -19,6 +19,7 @@ import Egreso from '@/models/api/entities/Egreso'
 import AsignacionHabitacion from '@/models/api/entities/AsignacionHabitacion'
 import HorarioPupilaje from '@/models/api/entities/HorarioPupilaje'
 import ResidenteServicio from '@/models/api/entities/ResidenteServicio'
+import Recibo from '@/models/api/entities/Recibo'
 import Service from '../core/Service'
 import UserService from './custom/UserService'
 
@@ -75,3 +76,4 @@ export const horarioPupilajeService = new Service<HorarioPupilaje>({
 export const residenteServicioService = new Service<ResidenteServicio>({
   endpoint: 'residente-servicio',
 })
+export const reciboService = new Service<Recibo>({ endpoint: 'recibos' })

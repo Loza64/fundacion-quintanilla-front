@@ -13,6 +13,7 @@ import { albergueService, userService } from '@/services/api'
 import { enumOptions, humanize } from '@/utils/options'
 import CrudView from '@/views/core/CrudView'
 import HabitacionView from '@/views/catalog/HabitacionView'
+import ReciboView from '@/views/finanzas/ReciboView'
 import { Tag } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 
@@ -123,6 +124,11 @@ export default function AlbergueView() {
       key: 'habitaciones',
       label: 'Habitaciones',
       render: (albergue) => <HabitacionView scopeAlbergueId={albergue.id} />,
+    },
+    {
+      key: 'recibos',
+      label: 'Recibos',
+      render: (albergue) => <ReciboView scopeAlbergueId={albergue.id} />,
     },
   ]
 

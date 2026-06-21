@@ -35,4 +35,5 @@ export const queryKeys = {
   asignacionHabitacion: ['asignacion-habitaciones'],
   horarioPupilaje: ['horario-pupilaje'],
   residenteServicio: ['residente-servicio'],
+  recibos: ['recibos'],
 }

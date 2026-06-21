@@ -127,9 +127,16 @@ igual que los del formulario (que ya la tenían).
 
 > Sin cambios de backend en esta fase (escaneo de `isDeleted` limpio; filtros y relaciones presentes).
 
-## ⬜ Fase 6 — Finanzas y reportes
-- [ ] Recibos (→ Albergue)
-- [ ] Reportes (caso de uso del Admin)
+## ✅ Fase 6 — Finanzas y reportes — **COMPLETADA**
+
+- [x] **Recibos** (`ReciboView`): standalone (`/recibos`) + tabs en **Albergue** y **Residente**
+  (scopeable por albergue o por residente; albergue requerido, residente opcional)
+- [x] **Reportes** (`ReportesView`): dashboard de estadísticas (`/reportes`) con tarjetas de totales
+  (personas, residentes activos/total, albergues, habitaciones, expedientes, beneficios, servicios, recibos)
+
+> Reportes se construye agregando el `total` de los endpoints de lista existentes (no hay
+> endpoint de reportes en el backend). Posible extensión futura: exportar a CSV/PDF.
+> Sin cambios de backend en esta fase.
 
 ## ⬜ Fase 7 — Vista del rol Encargado
 - [ ] Dashboard acotado: su albergue asignado, sus residentes

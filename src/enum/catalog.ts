@@ -153,3 +153,18 @@ export const TIPO_RESIDENTE = [
   'EMERGENCIA',
   'VOLUNTARIO',
 ] as const
+
+export const TIPO_RECIBO = [
+  'DONACION',
+  'PAGO_RENTA',
+  'SERVICIO_MEDICO',
+  'LUZ',
+  'AGUA',
+  'TELEFONO',
+  'INTERNET',
+  'CABLE',
+  'ALIMENTACION',
+  'TRANSPORTE',
+  'MANTENIMIENTO',
+  'OTRO',
+] as const
