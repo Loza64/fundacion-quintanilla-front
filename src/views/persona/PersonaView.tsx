@@ -24,6 +24,22 @@ export default function PersonaView() {
 
   const columns: ColumnsType<Persona> = [
     { title: 'ID', dataIndex: 'id', key: 'id', align: 'center' },
+    {
+      title: 'Foto',
+      dataIndex: 'profile',
+      key: 'profile',
+      align: 'center',
+      render: (profile?: Persona['profile']) =>
+        profile?.secureUrl ? (
+          <img
+            src={profile.secureUrl}
+            alt="foto"
+            className="mx-auto size-10 rounded-full object-cover"
+          />
+        ) : (
+          '—'
+        ),
+    },
     { title: 'Nombres', dataIndex: 'nombres', key: 'nombres', align: 'center' },
     {
       title: 'Apellidos',
@@ -53,6 +69,7 @@ export default function PersonaView() {
   ]
 
   const fields: CrudField[] = [
+    { name: 'profile', label: 'Foto', type: 'upload' },
     { name: 'nombres', label: 'Nombres', required: true },
     { name: 'apellidos', label: 'Apellidos', required: true },
     {
@@ -97,6 +114,15 @@ export default function PersonaView() {
   ]
 
   const toFormValues = (persona: Persona) => ({
+    profile: persona.profile
+      ? {
+          uid: String(persona.profile.id),
+          name: 'foto',
+          status: 'done' as const,
+          id: persona.profile.id,
+          url: persona.profile.secureUrl,
+        }
+      : null,
     nombres: persona.nombres,
     apellidos: persona.apellidos,
     fecha_nacimiento: persona.fecha_nacimiento,

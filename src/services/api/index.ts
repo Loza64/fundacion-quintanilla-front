@@ -22,9 +22,11 @@ import ResidenteServicio from '@/models/api/entities/ResidenteServicio'
 import Recibo from '@/models/api/entities/Recibo'
 import Service from '../core/Service'
 import UserService from './custom/UserService'
+import UploadService from './custom/UploadService'
 
 //custom
 export const userService = new UserService()
+export const uploadService = new UploadService()
 
 //core
 export const roleService = new Service<Role>({ endpoint: 'roles' })

@@ -10,6 +10,7 @@ export type CrudFieldType =
   | 'select'
   | 'textarea'
   | 'date'
+  | 'upload'
 
 export interface CrudSelectOption {
   label: string

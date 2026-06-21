@@ -10,6 +10,8 @@ import type {
   CrudSummaryItem,
   RelationTab,
 } from '@/models/app/crud'
+import type AvatarUpload from '@/models/photos/AvatarUpload'
+import { uploadService } from '@/services/api'
 import CrudListView from '@/views/core/CrudListView'
 import { FilterOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons'
 import { Badge, Button, Input, Popover, Popconfirm, Select, Space } from 'antd'
@@ -116,12 +118,30 @@ export default function CrudView<Entity extends BaseEntity>({
     setOpen(true)
   }
 
+  const resolveUploads = async (values: Record<string, unknown>) => {
+    const resolved = { ...values }
+    for (const field of fields) {
+      if (field.type !== 'upload') continue
+      const value = values[field.name] as AvatarUpload | null | undefined
+      if (value?.originFileObj) {
+        const uploaded = await uploadService.upload(value.originFileObj)
+        resolved[field.name] = { id: uploaded.id }
+      } else if (value?.id) {
+        resolved[field.name] = { id: value.id }
+      } else {
+        delete resolved[field.name]
+      }
+    }
+    return resolved
+  }
+
   const handleSubmit = async (values: Record<string, unknown>) => {
-    const payload = {
-      ...(toPayload ? toPayload(values) : values),
-      ...defaults,
-    } as Partial<Entity>
     try {
+      const resolved = await resolveUploads(values)
+      const payload = {
+        ...(toPayload ? toPayload(resolved) : resolved),
+        ...defaults,
+      } as Partial<Entity>
       if (mode === 'create') {
         await create({ payload: payload as Entity })
         toast.success(`${label} creado`)

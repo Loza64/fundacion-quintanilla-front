@@ -1,4 +1,6 @@
 import type { CrudField } from '@/models/app/crud'
+import type AvatarUpload from '@/models/photos/AvatarUpload'
+import AvatarUploader from '@/ui/AvatarUploader'
 import {
   DatePicker,
   Form,
@@ -11,6 +13,21 @@ import {
 import type { Rule } from 'antd/es/form'
 import dayjs from 'dayjs'
 import { useEffect } from 'react'
+
+function AvatarField({
+  value,
+  onChange,
+}: {
+  value?: AvatarUpload | null
+  onChange?: (file: AvatarUpload | null) => void
+}) {
+  return (
+    <AvatarUploader
+      avatarFile={value ?? null}
+      setAvatarFile={(file) => onChange?.(file)}
+    />
+  )
+}
 
 export interface CrudFormModalProps {
   open: boolean
@@ -73,6 +90,8 @@ function renderInput(field: CrudField, dataTestId: string) {
           data-testid={dataTestId}
         />
       )
+    case 'upload':
+      return <AvatarField />
     default:
       return <Input placeholder={field.placeholder} data-testid={dataTestId} />
   }

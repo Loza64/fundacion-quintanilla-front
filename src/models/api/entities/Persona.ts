@@ -1,8 +1,10 @@
 import BaseEntity from '../core/_BaseEntity'
+import type Upload from './Upload'
 
 export default interface Persona extends BaseEntity {
   nombres: string
   apellidos: string
+  profile?: Upload | null
   fecha_nacimiento?: string
   edad?: number
   sexo?: string
