@@ -194,6 +194,8 @@ export default function CrudView<Entity extends BaseEntity>({
             onChange={(value) =>
               setFilterValues((prev) => ({ ...prev, [filter.name]: value }))
             }
+            showSearch
+            optionFilterProp="label"
             allowClear
           />
         </div>

@@ -111,12 +111,21 @@ cada tab hija es un `CrudView` que a su vez acepta `relations`.
 - `expediente` no tenía filtro `persona` → agregado (querys + controller).
 - `historial-expediente` y `grupo-familiar`: lógica `isDeleted` invertida (listas vacías) → corregida.
 
-## ⬜ Fase 5 — Residentes y operativa
-- [ ] **Residentes** (→ Expediente + Albergue)
-- [ ] Ingresos / Egresos
-- [ ] Asignación de habitación (→ Habitación)
-- [ ] Horario de pupilaje
-- [ ] Residente-servicio (→ Servicio)
+## ✅ Fase 5 — Residentes y operativa — **COMPLETADA**
+
+- [x] **Residentes** (`ResidenteView`): standalone (selects Expediente + Albergue) + scopeado en Expediente (tab Residentes)
+- [x] **Ingresos / Egresos** (relation managers scopeados por residente)
+- [x] **Asignación de habitación** (→ Habitación, con select)
+- [x] **Horario de pupilaje** (día + entrada/salida)
+- [x] **Residente-servicio** (→ Servicio, con select)
+
+**Cadena de 3 niveles validada:** `Persona → Expediente → Residente → Ingreso/Egreso/...`.
+El residente tiene 5 relation managers; creé un ingreso desde el nivel más profundo.
+
+**Mejora de UX:** los dropdowns de **Filtros** ahora tienen búsqueda (`showSearch`),
+igual que los del formulario (que ya la tenían).
+
+> Sin cambios de backend en esta fase (escaneo de `isDeleted` limpio; filtros y relaciones presentes).
 
 ## ⬜ Fase 6 — Finanzas y reportes
 - [ ] Recibos (→ Albergue)

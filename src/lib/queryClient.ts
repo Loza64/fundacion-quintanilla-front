@@ -29,4 +29,10 @@ export const queryKeys = {
   expedientes: ['expedientes'],
   historialExpediente: ['historial-expediente'],
   valoracionProfesional: ['valoracion-profesional'],
+  residentes: ['residentes'],
+  ingresos: ['ingresos'],
+  egresos: ['egresos'],
+  asignacionHabitacion: ['asignacion-habitaciones'],
+  horarioPupilaje: ['horario-pupilaje'],
+  residenteServicio: ['residente-servicio'],
 }

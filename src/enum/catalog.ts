@@ -146,3 +146,10 @@ export const ESPECIALIDAD_PROFESIONAL = [
   'NUTRICION',
   'OTRO',
 ] as const
+
+export const TIPO_RESIDENTE = [
+  'PERMANENTE',
+  'TEMPORAL',
+  'EMERGENCIA',
+  'VOLUNTARIO',
+] as const

@@ -13,6 +13,12 @@ import PersonaBeneficio from '@/models/api/entities/PersonaBeneficio'
 import Expediente from '@/models/api/entities/Expediente'
 import HistorialExpediente from '@/models/api/entities/HistorialExpediente'
 import ValoracionProfesional from '@/models/api/entities/ValoracionProfesional'
+import Residente from '@/models/api/entities/Residente'
+import Ingreso from '@/models/api/entities/Ingreso'
+import Egreso from '@/models/api/entities/Egreso'
+import AsignacionHabitacion from '@/models/api/entities/AsignacionHabitacion'
+import HorarioPupilaje from '@/models/api/entities/HorarioPupilaje'
+import ResidenteServicio from '@/models/api/entities/ResidenteServicio'
 import Service from '../core/Service'
 import UserService from './custom/UserService'
 
@@ -54,4 +60,18 @@ export const historialExpedienteService = new Service<HistorialExpediente>({
 })
 export const valoracionProfesionalService = new Service<ValoracionProfesional>({
   endpoint: 'valoracion-profesional',
+})
+export const residenteService = new Service<Residente>({
+  endpoint: 'residentes',
+})
+export const ingresoService = new Service<Ingreso>({ endpoint: 'ingresos' })
+export const egresoService = new Service<Egreso>({ endpoint: 'egresos' })
+export const asignacionHabitacionService = new Service<AsignacionHabitacion>({
+  endpoint: 'asignacion-habitaciones',
+})
+export const horarioPupilajeService = new Service<HorarioPupilaje>({
+  endpoint: 'horario-pupilaje',
+})
+export const residenteServicioService = new Service<ResidenteServicio>({
+  endpoint: 'residente-servicio',
 })

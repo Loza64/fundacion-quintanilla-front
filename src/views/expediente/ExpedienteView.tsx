@@ -14,6 +14,7 @@ import { enumOptions, humanize } from '@/utils/options'
 import CrudView from '@/views/core/CrudView'
 import HistorialExpedienteView from '@/views/expediente/HistorialExpedienteView'
 import ValoracionProfesionalView from '@/views/expediente/ValoracionProfesionalView'
+import ResidenteView from '@/views/residente/ResidenteView'
 import { Tag } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 
@@ -165,6 +166,13 @@ export default function ExpedienteView({
       label: 'Valoraciones',
       render: (expediente) => (
         <ValoracionProfesionalView scopeExpedienteId={expediente.id ?? 0} />
+      ),
+    },
+    {
+      key: 'residentes',
+      label: 'Residentes',
+      render: (expediente) => (
+        <ResidenteView scopeExpedienteId={expediente.id ?? 0} />
       ),
     },
   ]
