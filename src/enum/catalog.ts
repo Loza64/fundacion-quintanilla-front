@@ -52,3 +52,65 @@ export const TIPO_SERVICIO = [
   'ALOJAMIENTO',
   'OTRO',
 ] as const
+
+export const SEXO = ['MASCULINO', 'FEMENINO'] as const
+
+export const ESTADO_CIVIL = [
+  'SOLTERO',
+  'CASADO',
+  'DIVORCIADO',
+  'VIUDO',
+  'UNION_LIBRE',
+  'SEPARADO',
+] as const
+
+export const PARENTESCO = [
+  'PADRE',
+  'MADRE',
+  'HIJO',
+  'HIJA',
+  'HERMANO',
+  'HERMANA',
+  'ABUELO',
+  'ABUELA',
+  'TIO',
+  'TIA',
+  'PRIMO',
+  'PRIMA',
+  'CONYUGE',
+  'PAREJA',
+  'TUTOR',
+  'RESPONSABLE',
+  'OTRO',
+] as const
+
+export const SITUACION_LABORAL_TIPO = [
+  'EMPLEADO',
+  'DESEMPLEADO',
+  'INDEPENDIENTE',
+  'ESTUDIANTE',
+  'JUBILADO',
+  'DISCAPACIDAD',
+] as const
+
+export const SITUACION_PARO = ['SIN_PARO', 'EN_PARO', 'SUBSIDIO'] as const
+
+export const PRESTACION_PARO = ['SI', 'NO', 'EN_TRAMITE'] as const
+
+export const NIVEL_ACADEMICO = [
+  'PRIMARIA',
+  'SECUNDARIA',
+  'BACHILLERATO',
+  'TECNICO',
+  'UNIVERSITARIO',
+  'POSTGRADO',
+] as const
+
+export const ESTADO_ACADEMICO = [
+  'EN_CURSO',
+  'COMPLETADO',
+  'ABANDONADO',
+  'SUSPENDIDO',
+] as const
+
+export const TIPO_ECONOMIA = ['INGRESO', 'EGRESO'] as const

@@ -79,13 +79,19 @@ Infra CRUD reutilizable creada y validada en navegador:
 - `habitacion` create DTO: `capacidad` tenía `@IsString()` además de `@IsInt()` → quitado.
 - `habitacion.controller`: lógica de `isDeleted` invertida (devolvía vacío) → corregida.
 
-## ⬜ Fase 3 — Persona (entidad raíz) y sub-fichas
-- [ ] **Personas** (CRUD + buscador)
-- [ ] Grupo familiar
-- [ ] Situación laboral
-- [ ] Situación académica
-- [ ] Economía
-- [ ] Persona-beneficio (→ Beneficio)
+## ✅ Fase 3 — Persona y sub-fichas — **COMPLETADA**
+
+- [x] **Personas** (`PersonaView`): CRUD + buscador + filtros (sexo, estado civil)
+- [x] **5 sub-fichas como relation managers** en el detalle de la persona (tabs scopeados):
+  Grupo familiar, Situación laboral, Situación académica, Economía, Beneficios (→ Beneficio)
+- [x] Cada sub-ficha hace CRUD scopeado a la persona (sin pedir la persona en el form)
+
+**Nuevo en la infra:**
+- Campo `date` (`CrudFormModal` con `DatePicker` + conversión dayjs ↔ string genérica).
+- Validado en navegador: persona con fecha de nacimiento + familiar creado desde el tab.
+
+**Backend (LOCAL, sin commit) — bug corregido:**
+- `economia` no tenía filtro `persona` (querys + controller) → agregado para el scoping.
 
 ## ⬜ Fase 4 — Expediente
 - [ ] **Expedientes** (1–1 con persona)

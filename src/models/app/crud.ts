@@ -9,6 +9,7 @@ export type CrudFieldType =
   | 'switch'
   | 'select'
   | 'textarea'
+  | 'date'
 
 export interface CrudSelectOption {
   label: string

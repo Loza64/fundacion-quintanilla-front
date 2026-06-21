@@ -1,6 +1,15 @@
 import type { CrudField } from '@/models/app/crud'
-import { Form, Input, InputNumber, Modal, Select, Switch } from 'antd'
+import {
+  DatePicker,
+  Form,
+  Input,
+  InputNumber,
+  Modal,
+  Select,
+  Switch,
+} from 'antd'
 import type { Rule } from 'antd/es/form'
+import dayjs from 'dayjs'
 import { useEffect } from 'react'
 
 export interface CrudFormModalProps {
@@ -14,6 +23,8 @@ export interface CrudFormModalProps {
   onSubmit: (values: Record<string, unknown>) => void
 }
 
+const DATE_FORMAT = 'YYYY-MM-DD'
+
 function renderInput(field: CrudField) {
   switch (field.type) {
     case 'password':
@@ -22,6 +33,8 @@ function renderInput(field: CrudField) {
       return <InputNumber className="w-full!" placeholder={field.placeholder} />
     case 'switch':
       return <Switch />
+    case 'date':
+      return <DatePicker className="w-full!" format="DD/MM/YYYY" />
     case 'textarea':
       return <Input.TextArea rows={3} placeholder={field.placeholder} />
     case 'select':
@@ -52,11 +65,32 @@ export default function CrudFormModal({
 }: CrudFormModalProps) {
   const [form] = Form.useForm()
 
+  const dateFieldsKey = JSON.stringify(
+    fields.filter((field) => field.type === 'date').map((field) => field.name)
+  )
+
   useEffect(() => {
     if (!open) return
     form.resetFields()
-    if (initialValues) form.setFieldsValue(initialValues)
-  }, [open, initialValues, form])
+    if (initialValues) {
+      const dateFields: string[] = JSON.parse(dateFieldsKey)
+      const values = { ...initialValues }
+      for (const name of dateFields) {
+        if (values[name]) values[name] = dayjs(values[name] as string)
+      }
+      form.setFieldsValue(values)
+    }
+  }, [open, initialValues, dateFieldsKey, form])
+
+  const handleFinish = (values: Record<string, unknown>) => {
+    const dateFields: string[] = JSON.parse(dateFieldsKey)
+    const result = { ...values }
+    for (const name of dateFields) {
+      const value = result[name]
+      if (dayjs.isDayjs(value)) result[name] = value.format(DATE_FORMAT)
+    }
+    onSubmit(result)
+  }
 
   const visibleFields = fields.filter(
     (field) => !(mode === 'edit' && field.hideOnEdit)
@@ -72,7 +106,7 @@ export default function CrudFormModal({
       cancelText="Cancelar"
       confirmLoading={confirmLoading}
     >
-      <Form form={form} layout="vertical" onFinish={onSubmit}>
+      <Form form={form} layout="vertical" onFinish={handleFinish}>
         {visibleFields.map((field) => {
           const rules: Rule[] = [
             ...(field.required

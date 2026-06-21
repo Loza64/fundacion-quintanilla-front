@@ -20,4 +20,10 @@ export const queryKeys = {
   habitaciones: ['habitaciones'],
   beneficios: ['beneficios'],
   servicios: ['servicios'],
+  personas: ['personas'],
+  grupoFamiliar: ['grupo-familiar'],
+  situacionLaboral: ['situacion-laboral'],
+  situacionAcademica: ['situacion-academica'],
+  economia: ['economias'],
+  personaBeneficio: ['persona-beneficio'],
 }
