@@ -15,6 +15,7 @@ import { useEffect } from 'react'
 export interface CrudFormModalProps {
   open: boolean
   title: string
+  testId?: string
   fields: CrudField[]
   mode: 'create' | 'edit'
   initialValues?: Record<string, unknown>
@@ -25,18 +26,41 @@ export interface CrudFormModalProps {
 
 const DATE_FORMAT = 'YYYY-MM-DD'
 
-function renderInput(field: CrudField) {
+function renderInput(field: CrudField, dataTestId: string) {
   switch (field.type) {
     case 'password':
-      return <Input.Password placeholder={field.placeholder} />
+      return (
+        <Input.Password
+          placeholder={field.placeholder}
+          data-testid={dataTestId}
+        />
+      )
     case 'number':
-      return <InputNumber className="w-full!" placeholder={field.placeholder} />
+      return (
+        <InputNumber
+          className="w-full!"
+          placeholder={field.placeholder}
+          data-testid={dataTestId}
+        />
+      )
     case 'switch':
-      return <Switch />
+      return <Switch data-testid={dataTestId} />
     case 'date':
-      return <DatePicker className="w-full!" format="DD/MM/YYYY" />
+      return (
+        <DatePicker
+          className="w-full!"
+          format="DD/MM/YYYY"
+          data-testid={dataTestId}
+        />
+      )
     case 'textarea':
-      return <Input.TextArea rows={3} placeholder={field.placeholder} />
+      return (
+        <Input.TextArea
+          rows={3}
+          placeholder={field.placeholder}
+          data-testid={dataTestId}
+        />
+      )
     case 'select':
       return (
         <Select
@@ -46,16 +70,18 @@ function renderInput(field: CrudField) {
           showSearch
           optionFilterProp="label"
           allowClear
+          data-testid={dataTestId}
         />
       )
     default:
-      return <Input placeholder={field.placeholder} />
+      return <Input placeholder={field.placeholder} data-testid={dataTestId} />
   }
 }
 
 export default function CrudFormModal({
   open,
   title,
+  testId,
   fields,
   mode,
   initialValues,
@@ -63,6 +89,7 @@ export default function CrudFormModal({
   onCancel,
   onSubmit,
 }: CrudFormModalProps) {
+  const tid = testId ?? 'crud'
   const [form] = Form.useForm()
 
   const dateFieldsKey = JSON.stringify(
@@ -105,6 +132,8 @@ export default function CrudFormModal({
       okText="Guardar"
       cancelText="Cancelar"
       confirmLoading={confirmLoading}
+      okButtonProps={{ 'data-testid': `${tid}-form-submit` }}
+      cancelButtonProps={{ 'data-testid': `${tid}-form-cancel` }}
     >
       <Form form={form} layout="vertical" onFinish={handleFinish}>
         {visibleFields.map((field) => {
@@ -124,7 +153,7 @@ export default function CrudFormModal({
               valuePropName={field.type === 'switch' ? 'checked' : 'value'}
               rules={rules}
             >
-              {renderInput(field)}
+              {renderInput(field, `${tid}-field-${field.name}`)}
             </Form.Item>
           )
         })}

@@ -23,6 +23,7 @@ export interface CrudViewProps<Entity extends BaseEntity> {
   service: AbstractService<Entity>
   queryKey: string | string[]
   label: string
+  testId?: string
   columns: ColumnsType<Entity>
   fields: CrudField[]
   filters?: CrudFilter[]
@@ -51,6 +52,7 @@ export default function CrudView<Entity extends BaseEntity>({
   service,
   queryKey,
   label,
+  testId,
   columns,
   fields,
   filters = [],
@@ -66,6 +68,8 @@ export default function CrudView<Entity extends BaseEntity>({
   relations = [],
   summary,
 }: CrudViewProps<Entity>) {
+  const tid = testId ?? label.replace(/\s+/g, '-').toLowerCase()
+
   const [open, setOpen] = useState(false)
   const [mode, setMode] = useState<'create' | 'edit'>('create')
   const [editing, setEditing] = useState<Entity | null>(null)
@@ -146,12 +150,20 @@ export default function CrudView<Entity extends BaseEntity>({
   const rowActions = (record: Entity) => (
     <Space>
       {hasDetail && (
-        <Button type="link" onClick={() => setDetailRecord(record)}>
+        <Button
+          type="link"
+          onClick={() => setDetailRecord(record)}
+          data-testid={`${tid}-view-${record.id}`}
+        >
           Ver
         </Button>
       )}
       {canEdit(record) && (
-        <Button type="link" onClick={() => openEdit(record)}>
+        <Button
+          type="link"
+          onClick={() => openEdit(record)}
+          data-testid={`${tid}-edit-${record.id}`}
+        >
           Editar
         </Button>
       )}
@@ -161,8 +173,11 @@ export default function CrudView<Entity extends BaseEntity>({
           okText="Sí"
           cancelText="No"
           onConfirm={() => handleDelete(record)}
+          okButtonProps={{
+            'data-testid': `${tid}-delete-confirm`,
+          }}
         >
-          <Button type="link" danger>
+          <Button type="link" danger data-testid={`${tid}-delete-${record.id}`}>
             Eliminar
           </Button>
         </Popconfirm>
@@ -221,6 +236,7 @@ export default function CrudView<Entity extends BaseEntity>({
             value={searchInput}
             onChange={(event) => setSearchInput(event.target.value)}
             className="w-full! sm:w-80!"
+            data-testid={`${tid}-search`}
           />
         )}
         {filters.length > 0 && (
@@ -230,13 +246,20 @@ export default function CrudView<Entity extends BaseEntity>({
             placement="bottomLeft"
           >
             <Badge count={activeFilters} size="small">
-              <Button icon={<FilterOutlined />}>Filtros</Button>
+              <Button icon={<FilterOutlined />} data-testid={`${tid}-filters`}>
+                Filtros
+              </Button>
             </Badge>
           </Popover>
         )}
       </Space>
       {canCreate && (
-        <Button type="primary" icon={<PlusOutlined />} onClick={openCreate}>
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          onClick={openCreate}
+          data-testid={`${tid}-new`}
+        >
           Nuevo
         </Button>
       )}
@@ -256,6 +279,7 @@ export default function CrudView<Entity extends BaseEntity>({
       <CrudFormModal
         open={open}
         mode={mode}
+        testId={tid}
         title={mode === 'create' ? `Nuevo ${label}` : `Editar ${label}`}
         fields={fields}
         initialValues={initialValues}

@@ -46,7 +46,7 @@ export default function AuthView() {
                   name="username"
                   rules={[{ required: true, message: 'Ingresa tu usuario' }]}
                 >
-                  <Input placeholder="Usuario" />
+                  <Input placeholder="Usuario" data-testid="login-username" />
                 </Form.Item>
 
                 <Form.Item
@@ -54,7 +54,10 @@ export default function AuthView() {
                   name="password"
                   rules={[{ required: true, message: 'Ingresa tu contraseña' }]}
                 >
-                  <Input.Password placeholder="Contraseña" />
+                  <Input.Password
+                    placeholder="Contraseña"
+                    data-testid="login-password"
+                  />
                 </Form.Item>
 
                 <Form.Item>
@@ -63,6 +66,7 @@ export default function AuthView() {
                     htmlType="submit"
                     loading={loading.login}
                     className="w-full font-bold!"
+                    data-testid="login-submit"
                   >
                     Iniciar sesión
                   </Button>
