@@ -145,8 +145,8 @@ importers:
         specifier: ^4.0.8
         version: 4.0.8
       pnpm:
-        specifier: ^10.28.1
-        version: 10.28.2
+        specifier: ^10.34.4
+        version: 10.34.4
       postcss:
         specifier: ^8.5.6
         version: 8.5.6
@@ -1899,7 +1899,7 @@ packages:
   git-raw-commits@4.0.0:
     resolution: {integrity: sha512-ICsMM1Wk8xSGMowkOmPrzo2Fgmfo4bMHLNX6ytHjajRJUqvHOw/TFapQ+QG75c3X/tTDDhOSRPGC52dDbNM8FQ==}
     engines: {node: '>=16'}
-    deprecated: This package is no longer maintained. For the JavaScript API, please use @conventional-changelog/git-client instead.
+    deprecated: Deprecated and no longer maintained. Use @conventional-changelog/git-client instead.
     hasBin: true
 
   glob-parent@5.1.2:
@@ -2475,8 +2475,8 @@ packages:
     engines: {node: '>=18'}
     hasBin: true
 
-  pnpm@10.28.2:
-    resolution: {integrity: sha512-QYcvA3rSL3NI47Heu69+hnz9RI8nJtnPdMCPGVB8MdLI56EVJbmD/rwt9kC1Q43uYCPrsfhO1DzC1lTSvDJiZA==}
+  pnpm@10.34.4:
+    resolution: {integrity: sha512-h2i+VSAK4/Iia2Un/Momh+FLxOXxLXchoPJdo99HkVF3BYZI20F3uvNIEg+guidS2NjZP2vq8f5krhjajelhrw==}
     engines: {node: '>=18.12'}
     hasBin: true
 
@@ -5502,7 +5502,7 @@ snapshots:
     optionalDependencies:
       fsevents: 2.3.2
 
-  pnpm@10.28.2: {}
+  pnpm@10.34.4: {}
 
   possible-typed-array-names@1.1.0: {}
 
