@@ -41,4 +41,9 @@ export default class UserService extends Service<User> {
     const res = await this.axios.get<User>('/auth/profile')
     return res.data
   }
+
+  public async updateProfile(payload: Partial<User>): Promise<User> {
+    const res = await this.axios.put<User>('/auth/profile', payload)
+    return res.data
+  }
 }

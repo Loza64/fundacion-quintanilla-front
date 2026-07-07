@@ -94,4 +94,22 @@ export default class Service<
       this.withMeta(params.config)
     )
   }
+
+  async softDelete(params: DeleteParams): Promise<BaseResponse<Entity>> {
+    const res = await this.axios.patch(
+      this.getUrl(params.endpoint, `${params.id}/soft-delete`),
+      undefined,
+      this.withMeta(params.config)
+    )
+    return res.data
+  }
+
+  async restore(params: DeleteParams): Promise<BaseResponse<Entity>> {
+    const res = await this.axios.patch(
+      this.getUrl(params.endpoint, `${params.id}/restore`),
+      undefined,
+      this.withMeta(params.config)
+    )
+    return res.data
+  }
 }

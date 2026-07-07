@@ -1,6 +1,6 @@
 import { menu, selectItemMenu, selectSubItemMenu } from '@/config/menu'
 import { searchRecoil } from '@/constants/recoil'
-import type { RoleName } from '@/enum/role'
+import { roles, type RoleName } from '@/enum/role'
 import useRecoilStorage from '@/hooks/core/useRecoilStorage'
 import { useSession } from '@/hooks/useSession'
 import type { MenuItem, SubMenuItem } from '@/models/app/menu'
@@ -25,7 +25,7 @@ import {
 } from 'antd'
 import type { MenuProps } from 'antd/lib'
 import { useCallback, useMemo } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 const { Sider } = Layout
 const { Text } = Typography
@@ -42,6 +42,7 @@ export default function OutletMenu({
   const [search, setSearch] = useRecoilStorage<string | undefined>(searchRecoil)
   const { profile: profile, loading, logout } = useSession()
   const navigate = useNavigate()
+  const location = useLocation()
 
   const role = profile?.role?.name
 
@@ -51,9 +52,11 @@ export default function OutletMenu({
       role: RoleName,
       collapsed: boolean
     ): MenuProps['items'] => {
+      const isSuperAdmin = role === roles.superAdmin
       return menu
         .filter(
           (item) =>
+            isSuperAdmin ||
             item.authorized.includes(role) ||
             item.authorized.includes('*') ||
             item.children.some(
@@ -67,6 +70,7 @@ export default function OutletMenu({
           const children = item.children
             .filter(
               (c) =>
+                isSuperAdmin ||
                 c.authorized.includes(role) ||
                 (c.authorized.includes('*') && c.view)
             )
@@ -106,13 +110,13 @@ export default function OutletMenu({
     const item = selectItemMenu(location.pathname)
     if (!item) return ''
     return item.key
-  }, [])
+  }, [location])
 
   const subMenuKey = useMemo(() => {
     const item = selectSubItemMenu(location.pathname)
     if (!item) return ''
     return item.key
-  }, [])
+  }, [location])
 
   const handleLogout = () => {
     logout()

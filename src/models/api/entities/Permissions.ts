@@ -1,4 +1,7 @@
-export default interface Permissions {
-  id?: string
-  path: 'GET' | 'POST' | 'PUT' | 'DELETE'
+import BaseEntity from '../core/_BaseEntity'
+
+export default interface Permissions extends BaseEntity {
+  path: string
+  method: string
+  title?: string
 }

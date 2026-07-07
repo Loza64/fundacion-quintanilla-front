@@ -29,3 +29,12 @@ dist-ssr
 tsconfig.tsbuildinfo
 
 .eslintcache
+
+# Playwright
+/e2e-results
+/e2e-report
+/playwright-report
+/test-results
+/blob-report
+/.playwright
+/videos-e2e

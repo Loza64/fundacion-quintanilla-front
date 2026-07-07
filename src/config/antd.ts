@@ -5,7 +5,7 @@ const layoutBG = '#ffffff'
 
 const primaryColor = '#00C10D'
 const primaryHover = '#03840C'
-const secondaryColor = 'white'
+const secondaryColor = '#6b7280'
 
 const textBase = '#1f2937'
 const borderColor = '#e5e7eb'

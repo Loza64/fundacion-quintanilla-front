@@ -42,7 +42,9 @@ export default function SessionProvider({ children }: { children: ReactNode }) {
     ({ token, data }: SessionResponse) => {
       settings.token = token
       queryClient.setQueryData(queryKeys.session, data)
-      navigate('/dashboard', { replace: true })
+      const target =
+        data.role?.name === 'ENCARGADO' ? '/encargado' : '/dashboard'
+      navigate(target, { replace: true })
     },
     [navigate, queryClient]
   )
