@@ -14,9 +14,11 @@ import type AvatarUpload from '@/models/photos/AvatarUpload'
 import { uploadService } from '@/services/api'
 import CrudListView from '@/views/core/CrudListView'
 import {
+  DeleteOutlined,
   DownloadOutlined,
   FilterOutlined,
   PlusOutlined,
+  ReloadOutlined,
   SearchOutlined,
 } from '@ant-design/icons'
 import { Badge, Button, Input, Popover, Popconfirm, Select, Space } from 'antd'
@@ -42,6 +44,7 @@ export interface CrudViewProps<Entity extends BaseEntity> {
   canEdit?: (record: Entity) => boolean
   canDelete?: (record: Entity) => boolean
   exportable?: boolean
+  restorable?: boolean
   scopeParams?: Record<string, unknown>
   defaults?: Record<string, unknown>
   relations?: RelationTab<Entity>[]
@@ -72,6 +75,7 @@ export default function CrudView<Entity extends BaseEntity>({
   canEdit = () => true,
   canDelete = () => true,
   exportable = false,
+  restorable = true,
   scopeParams,
   defaults,
   relations = [],
@@ -90,10 +94,11 @@ export default function CrudView<Entity extends BaseEntity>({
   const [searchInput, setSearchInput] = useState('')
   const [detailRecord, setDetailRecord] = useState<Entity | null>(null)
   const [isExporting, setIsExporting] = useState(false)
+  const [showDeleted, setShowDeleted] = useState(false)
 
   const search = useDebouncedValue(searchInput, 350)
 
-  const { create, update, softDelete, isCreating, isUpdating } =
+  const { create, update, softDelete, restore, isCreating, isUpdating } =
     useCrud<Entity>({ service, queryKey })
 
   const openCreate = () => {
@@ -184,6 +189,16 @@ export default function CrudView<Entity extends BaseEntity>({
     }
   }
 
+  const handleRestore = async (record: Entity) => {
+    if (record.id == null) return
+    try {
+      await restore({ id: String(record.id) })
+      toast.success(`${label} restaurado`)
+    } catch (error) {
+      toast.error(errorMessage(error, `No se pudo restaurar el ${label}`))
+    }
+  }
+
   const hasDetail = relations.length > 0 || !!summary
 
   const rowActions = (record: Entity) => (
@@ -197,35 +212,56 @@ export default function CrudView<Entity extends BaseEntity>({
           Ver
         </Button>
       )}
-      {canEdit(record) && (
-        <Button
-          type="link"
-          onClick={() => openEdit(record)}
-          data-testid={`${tid}-edit-${record.id}`}
-        >
-          Editar
-        </Button>
-      )}
-      {canDelete(record) && (
+      {showDeleted ? (
         <Popconfirm
-          title={`¿Eliminar este ${label}?`}
+          title={`¿Restaurar este ${label}?`}
           okText="Sí"
           cancelText="No"
-          onConfirm={() => handleDelete(record)}
-          okButtonProps={{
-            'data-testid': `${tid}-delete-confirm`,
-          }}
+          onConfirm={() => handleRestore(record)}
+          okButtonProps={{ 'data-testid': `${tid}-restore-confirm` }}
         >
-          <Button type="link" danger data-testid={`${tid}-delete-${record.id}`}>
-            Eliminar
+          <Button type="link" data-testid={`${tid}-restore-${record.id}`}>
+            Restaurar
           </Button>
         </Popconfirm>
+      ) : (
+        <>
+          {canEdit(record) && (
+            <Button
+              type="link"
+              onClick={() => openEdit(record)}
+              data-testid={`${tid}-edit-${record.id}`}
+            >
+              Editar
+            </Button>
+          )}
+          {canDelete(record) && (
+            <Popconfirm
+              title={`¿Eliminar este ${label}?`}
+              okText="Sí"
+              cancelText="No"
+              onConfirm={() => handleDelete(record)}
+              okButtonProps={{
+                'data-testid': `${tid}-delete-confirm`,
+              }}
+            >
+              <Button
+                type="link"
+                danger
+                data-testid={`${tid}-delete-${record.id}`}
+              >
+                Eliminar
+              </Button>
+            </Popconfirm>
+          )}
+        </>
       )}
     </Space>
   )
 
   const extraParams: Record<string, unknown> = { ...scopeParams }
   if (searchable && search.trim()) extraParams.search = search.trim()
+  if (showDeleted) extraParams.isDeleted = true
   for (const [key, value] of Object.entries(filterValues)) {
     if (value !== undefined && value !== '') extraParams[key] = value
   }
@@ -263,7 +299,8 @@ export default function CrudView<Entity extends BaseEntity>({
     </div>
   )
 
-  const hasToolbar = searchable || filters.length > 0 || canCreate || exportable
+  const hasToolbar =
+    searchable || filters.length > 0 || canCreate || exportable || restorable
 
   const toolbar = hasToolbar ? (
     <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
@@ -292,6 +329,16 @@ export default function CrudView<Entity extends BaseEntity>({
             </Badge>
           </Popover>
         )}
+        {restorable && (
+          <Button
+            type={showDeleted ? 'primary' : 'default'}
+            icon={showDeleted ? <ReloadOutlined /> : <DeleteOutlined />}
+            onClick={() => setShowDeleted((value) => !value)}
+            data-testid={`${tid}-toggle-deleted`}
+          >
+            {showDeleted ? 'Ver activos' : 'Ver eliminados'}
+          </Button>
+        )}
       </Space>
       <Space wrap>
         {exportable && (
@@ -304,7 +351,7 @@ export default function CrudView<Entity extends BaseEntity>({
             Exportar Excel
           </Button>
         )}
-        {canCreate && (
+        {canCreate && !showDeleted && (
           <Button
             type="primary"
             icon={<PlusOutlined />}
