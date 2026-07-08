@@ -134,6 +134,7 @@ export default function HabitacionView({
       service={habitacionService}
       queryKey={queryKeys.habitaciones}
       label="habitación"
+      exportable={!scoped}
       columns={columns}
       fields={fields}
       filters={filters}

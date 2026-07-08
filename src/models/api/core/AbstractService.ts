@@ -50,6 +50,12 @@ export interface DeleteParams {
   config?: ServiceConfig
 }
 
+export interface ExportExcelParams {
+  endpoint?: string
+  filename?: string
+  config?: ServiceConfig
+}
+
 export default abstract class AbstractService<Entity> {
   abstract findAll(params?: FindAllParams): Promise<PaginationResponse<Entity>>
   abstract findById(params: FindByIdParams): Promise<BaseResponse<Entity>>
@@ -59,4 +65,5 @@ export default abstract class AbstractService<Entity> {
   abstract delete(params: DeleteParams): Promise<void>
   abstract softDelete(params: DeleteParams): Promise<BaseResponse<Entity>>
   abstract restore(params: DeleteParams): Promise<BaseResponse<Entity>>
+  abstract exportExcel(params?: ExportExcelParams): Promise<void>
 }

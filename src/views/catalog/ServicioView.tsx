@@ -54,6 +54,7 @@ export default function ServicioView() {
       service={servicioService}
       queryKey={queryKeys.servicios}
       label="servicio"
+      exportable
       columns={columns}
       fields={fields}
       filters={filters}

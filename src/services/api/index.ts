@@ -20,6 +20,8 @@ import AsignacionHabitacion from '@/models/api/entities/AsignacionHabitacion'
 import HorarioPupilaje from '@/models/api/entities/HorarioPupilaje'
 import ResidenteServicio from '@/models/api/entities/ResidenteServicio'
 import Recibo from '@/models/api/entities/Recibo'
+import Pais from '@/models/api/entities/Pais'
+import DivisionGeografica from '@/models/api/entities/DivisionGeografica'
 import Service from '../core/Service'
 import UserService from './custom/UserService'
 import UploadService from './custom/UploadService'
@@ -79,3 +81,7 @@ export const residenteServicioService = new Service<ResidenteServicio>({
   endpoint: 'residente-servicio',
 })
 export const reciboService = new Service<Recibo>({ endpoint: 'recibos' })
+export const paisService = new Service<Pais>({ endpoint: 'paises' })
+export const divisionGeograficaService = new Service<DivisionGeografica>({
+  endpoint: 'division-geografica',
+})
