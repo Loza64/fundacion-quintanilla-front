@@ -46,6 +46,7 @@ export default function PermissionsView() {
       toPayload={(values) => ({ title: values.title as string })}
       canCreate={false}
       canDelete={() => false}
+      restorable={false}
     />
   )
 }
