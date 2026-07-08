@@ -4,6 +4,8 @@ export enum RoutesEnum {
   DASHBOARD = '/dashboard',
   ROLES = '/roles',
   PERMISSIONS = '/permisos',
+  PAISES = '/paises',
+  DIVISIONES_GEOGRAFICAS = '/divisiones-geograficas',
   ALBERGUES = '/albergues',
   HABITACIONES = '/habitaciones',
   BENEFICIOS = '/beneficios',

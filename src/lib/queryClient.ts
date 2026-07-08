@@ -36,4 +36,6 @@ export const queryKeys = {
   horarioPupilaje: ['horario-pupilaje'],
   residenteServicio: ['residente-servicio'],
   recibos: ['recibos'],
+  paises: ['paises'],
+  divisionesGeograficas: ['divisiones-geograficas'],
 }

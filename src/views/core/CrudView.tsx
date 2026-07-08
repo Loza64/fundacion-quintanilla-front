@@ -13,7 +13,12 @@ import type {
 import type AvatarUpload from '@/models/photos/AvatarUpload'
 import { uploadService } from '@/services/api'
 import CrudListView from '@/views/core/CrudListView'
-import { FilterOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons'
+import {
+  DownloadOutlined,
+  FilterOutlined,
+  PlusOutlined,
+  SearchOutlined,
+} from '@ant-design/icons'
 import { Badge, Button, Input, Popover, Popconfirm, Select, Space } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { useState } from 'react'
@@ -36,6 +41,7 @@ export interface CrudViewProps<Entity extends BaseEntity> {
   canCreate?: boolean
   canEdit?: (record: Entity) => boolean
   canDelete?: (record: Entity) => boolean
+  exportable?: boolean
   scopeParams?: Record<string, unknown>
   defaults?: Record<string, unknown>
   relations?: RelationTab<Entity>[]
@@ -65,6 +71,7 @@ export default function CrudView<Entity extends BaseEntity>({
   canCreate = true,
   canEdit = () => true,
   canDelete = () => true,
+  exportable = false,
   scopeParams,
   defaults,
   relations = [],
@@ -82,6 +89,7 @@ export default function CrudView<Entity extends BaseEntity>({
   )
   const [searchInput, setSearchInput] = useState('')
   const [detailRecord, setDetailRecord] = useState<Entity | null>(null)
+  const [isExporting, setIsExporting] = useState(false)
 
   const search = useDebouncedValue(searchInput, 350)
 
@@ -165,6 +173,17 @@ export default function CrudView<Entity extends BaseEntity>({
     }
   }
 
+  const handleExport = async () => {
+    setIsExporting(true)
+    try {
+      await service.exportExcel({ filename: `${tid}.xlsx` })
+    } catch (error) {
+      toast.error(errorMessage(error, `No se pudo exportar ${label}`))
+    } finally {
+      setIsExporting(false)
+    }
+  }
+
   const hasDetail = relations.length > 0 || !!summary
 
   const rowActions = (record: Entity) => (
@@ -244,7 +263,7 @@ export default function CrudView<Entity extends BaseEntity>({
     </div>
   )
 
-  const hasToolbar = searchable || filters.length > 0 || canCreate
+  const hasToolbar = searchable || filters.length > 0 || canCreate || exportable
 
   const toolbar = hasToolbar ? (
     <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
@@ -274,16 +293,28 @@ export default function CrudView<Entity extends BaseEntity>({
           </Popover>
         )}
       </Space>
-      {canCreate && (
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={openCreate}
-          data-testid={`${tid}-new`}
-        >
-          Nuevo
-        </Button>
-      )}
+      <Space wrap>
+        {exportable && (
+          <Button
+            icon={<DownloadOutlined />}
+            loading={isExporting}
+            onClick={handleExport}
+            data-testid={`${tid}-export`}
+          >
+            Exportar Excel
+          </Button>
+        )}
+        {canCreate && (
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={openCreate}
+            data-testid={`${tid}-new`}
+          >
+            Nuevo
+          </Button>
+        )}
+      </Space>
     </div>
   ) : null
 

@@ -45,6 +45,20 @@ export const routesConfig: Record<RoutesEnum, RouteConfig> = {
     title: 'Permisos',
     search: false,
   },
+  [RoutesEnum.PAISES]: {
+    auth: true,
+    roles: ['ADMIN'],
+    permission: ['*'],
+    title: 'Países',
+    search: false,
+  },
+  [RoutesEnum.DIVISIONES_GEOGRAFICAS]: {
+    auth: true,
+    roles: ['ADMIN'],
+    permission: ['*'],
+    title: 'Divisiones geográficas',
+    search: false,
+  },
   [RoutesEnum.ALBERGUES]: {
     auth: true,
     roles: ['ADMIN'],

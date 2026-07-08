@@ -2,6 +2,7 @@ import AbstractService, {
   ApiServiceParams,
   CreateParams,
   DeleteParams,
+  ExportExcelParams,
   FindAllParams,
   FindByIdParams,
   FindBy,
@@ -111,5 +112,26 @@ export default class Service<
       this.withMeta(params.config)
     )
     return res.data
+  }
+
+  async exportExcel(params?: ExportExcelParams): Promise<void> {
+    const res = await this.axios.get(
+      this.getUrl(params?.endpoint, 'excel/generate'),
+      { ...this.withMeta(params?.config), responseType: 'blob' }
+    )
+
+    const contentType =
+      (res.headers['content-type'] as string | undefined) ??
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    const blob = new Blob([res.data as BlobPart], { type: contentType })
+    const url = window.URL.createObjectURL(blob)
+    const anchor = document.createElement('a')
+    anchor.href = url
+    anchor.download =
+      params?.filename ?? `${params?.endpoint ?? this.endpoint}.xlsx`
+    document.body.appendChild(anchor)
+    anchor.click()
+    anchor.remove()
+    window.URL.revokeObjectURL(url)
   }
 }
