@@ -141,6 +141,7 @@ export default function ReciboView({
       service={reciboService}
       queryKey={queryKeys.recibos}
       label="recibo"
+      exportable={!scopedAlbergue && !scopedResidente}
       searchable={false}
       columns={columns}
       fields={fields}

@@ -1,6 +1,7 @@
 import { useFindAll } from '@/hooks/core/useFindAll'
 import { queryKeys } from '@/lib/queryClient'
 import type Albergue from '@/models/api/entities/Albergue'
+import type DivisionGeografica from '@/models/api/entities/DivisionGeografica'
 import type User from '@/models/api/entities/User'
 import type {
   CrudField,
@@ -9,7 +10,11 @@ import type {
   RelationTab,
 } from '@/models/app/crud'
 import { TIPO_ALBERGUE } from '@/enum/catalog'
-import { albergueService, userService } from '@/services/api'
+import {
+  albergueService,
+  divisionGeograficaService,
+  userService,
+} from '@/services/api'
 import { enumOptions, humanize } from '@/utils/options'
 import CrudView from '@/views/core/CrudView'
 import HabitacionView from '@/views/catalog/HabitacionView'
@@ -27,6 +32,19 @@ export default function AlbergueView() {
   const encargadoOptions = (usersData?.data ?? []).map((user) => ({
     label: `${user.name} ${user.surname} (${user.username})`,
     value: user.id ?? 0,
+  }))
+
+  const { data: divisionesData } = useFindAll<DivisionGeografica>({
+    queryKey: queryKeys.divisionesGeograficas,
+    service: divisionGeograficaService,
+    queryParams: { page: 1, size: 100 },
+  })
+
+  const divisionOptions = (divisionesData?.data ?? []).map((division) => ({
+    label: division.pais?.nombre
+      ? `${division.nombre} (${division.pais.nombre})`
+      : (division.nombre ?? ''),
+    value: division.id ?? 0,
   }))
 
   const tipoOptions = enumOptions(TIPO_ALBERGUE)
@@ -75,6 +93,13 @@ export default function AlbergueView() {
     { name: 'telefono', label: 'Teléfono' },
     { name: 'correo', label: 'Correo', type: 'email' },
     {
+      name: 'divisionGeografica',
+      label: 'División geográfica',
+      type: 'select',
+      options: divisionOptions,
+      placeholder: 'Sin división',
+    },
+    {
       name: 'encargado',
       label: 'Encargado',
       type: 'select',
@@ -95,12 +120,16 @@ export default function AlbergueView() {
     telefono: albergue.telefono,
     correo: albergue.correo,
     encargado: albergue.encargado?.id,
+    divisionGeografica: albergue.divisionGeografica?.id,
   })
 
   const toPayload = (values: Record<string, unknown>) => {
-    const { encargado, ...rest } = values
+    const { encargado, divisionGeografica, ...rest } = values
     const payload: Record<string, unknown> = { ...rest }
     payload.encargado = encargado != null ? { id: encargado } : null
+    if (divisionGeografica != null) {
+      payload.divisionGeografica = { id: divisionGeografica }
+    }
     return payload as Partial<Albergue>
   }
 
@@ -115,6 +144,14 @@ export default function AlbergueView() {
       label: 'Encargado',
       value: albergue.encargado
         ? `${albergue.encargado.name} ${albergue.encargado.surname}`
+        : '—',
+    },
+    {
+      label: 'División geográfica',
+      value: albergue.divisionGeografica
+        ? albergue.divisionGeografica.pais?.nombre
+          ? `${albergue.divisionGeografica.nombre} (${albergue.divisionGeografica.pais.nombre})`
+          : (albergue.divisionGeografica.nombre ?? '—')
         : '—',
     },
   ]
@@ -137,6 +174,7 @@ export default function AlbergueView() {
       service={albergueService}
       queryKey={queryKeys.albergues}
       label="albergue"
+      exportable
       columns={columns}
       fields={fields}
       filters={filters}

@@ -1,4 +1,5 @@
 import BaseEntity from '../core/_BaseEntity'
+import type DivisionGeografica from './DivisionGeografica'
 import type User from './User'
 
 export default interface Albergue extends BaseEntity {
@@ -9,4 +10,5 @@ export default interface Albergue extends BaseEntity {
   telefono?: string
   correo?: string
   encargado?: User | null
+  divisionGeografica?: DivisionGeografica | null
 }

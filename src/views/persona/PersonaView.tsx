@@ -1,5 +1,7 @@
 import { ESTADO_CIVIL, SEXO } from '@/enum/catalog'
+import { useFindAll } from '@/hooks/core/useFindAll'
 import { queryKeys } from '@/lib/queryClient'
+import type Pais from '@/models/api/entities/Pais'
 import type Persona from '@/models/api/entities/Persona'
 import type {
   CrudField,
@@ -7,7 +9,7 @@ import type {
   CrudSummaryItem,
   RelationTab,
 } from '@/models/app/crud'
-import { personaService } from '@/services/api'
+import { paisService, personaService } from '@/services/api'
 import { enumOptions, humanize } from '@/utils/options'
 import CrudView from '@/views/core/CrudView'
 import ExpedienteView from '@/views/expediente/ExpedienteView'
@@ -21,6 +23,17 @@ import type { ColumnsType } from 'antd/es/table'
 export default function PersonaView() {
   const sexoOptions = enumOptions(SEXO)
   const estadoCivilOptions = enumOptions(ESTADO_CIVIL)
+
+  const { data: paisesData } = useFindAll<Pais>({
+    queryKey: queryKeys.paises,
+    service: paisService,
+    queryParams: { page: 1, size: 100 },
+  })
+
+  const paisOptions = (paisesData?.data ?? []).map((pais) => ({
+    label: pais.nombre ?? '',
+    value: pais.id ?? 0,
+  }))
 
   const columns: ColumnsType<Persona> = [
     { title: 'ID', dataIndex: 'id', key: 'id', align: 'center' },
@@ -93,7 +106,13 @@ export default function PersonaView() {
       required: true,
       options: estadoCivilOptions,
     },
-    { name: 'nacionalidad', label: 'Nacionalidad', required: true },
+    {
+      name: 'paisNacimiento',
+      label: 'País de nacimiento',
+      type: 'select',
+      required: true,
+      options: paisOptions,
+    },
     { name: 'idioma', label: 'Idioma', required: true },
     { name: 'documento_identificacion', label: 'Documento de identificación' },
     { name: 'direccion', label: 'Dirección' },
@@ -129,7 +148,7 @@ export default function PersonaView() {
     edad: persona.edad,
     sexo: persona.sexo,
     estado_civil: persona.estado_civil,
-    nacionalidad: persona.nacionalidad,
+    paisNacimiento: persona.paisNacimiento?.id,
     idioma: persona.idioma,
     documento_identificacion: persona.documento_identificacion,
     direccion: persona.direccion,
@@ -139,6 +158,13 @@ export default function PersonaView() {
     religion: persona.religion,
     observaciones: persona.observaciones,
   })
+
+  const toPayload = (values: Record<string, unknown>) => {
+    const { paisNacimiento, ...rest } = values
+    const payload: Record<string, unknown> = { ...rest }
+    if (paisNacimiento != null) payload.paisNacimiento = { id: paisNacimiento }
+    return payload as Partial<Persona>
+  }
 
   const summary = (persona: Persona): CrudSummaryItem[] => [
     {
@@ -153,7 +179,10 @@ export default function PersonaView() {
     },
     { label: 'Fecha de nacimiento', value: persona.fecha_nacimiento || '—' },
     { label: 'Edad', value: persona.edad ?? '—' },
-    { label: 'Nacionalidad', value: persona.nacionalidad || '—' },
+    {
+      label: 'País de nacimiento',
+      value: persona.paisNacimiento?.nombre || '—',
+    },
     { label: 'Teléfono', value: persona.telefono || '—' },
     { label: 'Correo', value: persona.correo_electronico || '—' },
     { label: 'Dirección', value: persona.direccion || '—' },
@@ -208,7 +237,9 @@ export default function PersonaView() {
       columns={columns}
       fields={fields}
       filters={filters}
+      exportable
       toFormValues={toFormValues}
+      toPayload={toPayload}
       fetchOne={(id) => personaService.findById({ id })}
       summary={summary}
       relations={relations}

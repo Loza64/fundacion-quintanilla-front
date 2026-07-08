@@ -154,6 +154,18 @@ export const TIPO_RESIDENTE = [
   'VOLUNTARIO',
 ] as const
 
+export const TIPO_DIVISION_GEOGRAFICA = [
+  'region',
+  'estado',
+  'provincia',
+  'departamento',
+  'condado',
+  'municipio',
+  'distrito',
+  'ciudad',
+  'parroquia',
+] as const
+
 export const TIPO_RECIBO = [
   'DONACION',
   'PAGO_RENTA',

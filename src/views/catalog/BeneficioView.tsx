@@ -54,6 +54,7 @@ export default function BeneficioView() {
       service={beneficioService}
       queryKey={queryKeys.beneficios}
       label="beneficio"
+      exportable
       columns={columns}
       fields={fields}
       filters={filters}

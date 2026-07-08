@@ -242,6 +242,7 @@ export default function ResidenteView({
       service={residenteService}
       queryKey={queryKeys.residentes}
       label="residente"
+      exportable={!scopedExp && !scopedAlb}
       searchable={!scopedExp}
       canCreate={!restricted}
       canDelete={() => !restricted}

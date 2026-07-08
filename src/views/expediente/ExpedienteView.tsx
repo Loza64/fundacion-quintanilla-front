@@ -182,6 +182,7 @@ export default function ExpedienteView({
       service={expedienteService}
       queryKey={queryKeys.expedientes}
       label="expediente"
+      exportable={!scoped}
       searchable={!scoped}
       columns={columns}
       fields={fields}
