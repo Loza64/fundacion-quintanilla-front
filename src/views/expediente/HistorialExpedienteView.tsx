@@ -73,6 +73,7 @@ export default function HistorialExpedienteView({
       service={historialExpedienteService}
       queryKey={queryKeys.historialExpediente}
       label="evento del historial"
+      dateFilter={{ label: 'Fecha' }}
       searchable={false}
       columns={columns}
       fields={fields}

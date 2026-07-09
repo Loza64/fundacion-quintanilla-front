@@ -19,6 +19,7 @@ import { enumOptions, humanize } from '@/utils/options'
 import CrudView from '@/views/core/CrudView'
 import HabitacionView from '@/views/catalog/HabitacionView'
 import ReciboView from '@/views/finanzas/ReciboView'
+import ResidenteView from '@/views/residente/ResidenteView'
 import { Tag } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 
@@ -157,6 +158,11 @@ export default function AlbergueView() {
   ]
 
   const relations: RelationTab<Albergue>[] = [
+    {
+      key: 'residentes',
+      label: 'Residentes',
+      render: (albergue) => <ResidenteView scopeAlbergueId={albergue.id} />,
+    },
     {
       key: 'habitaciones',
       label: 'Habitaciones',

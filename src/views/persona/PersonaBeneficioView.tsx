@@ -55,6 +55,13 @@ export default function PersonaBeneficioView({
       service={personaBeneficioService}
       queryKey={queryKeys.personaBeneficio}
       label="beneficio asignado"
+      dateFilter={{
+        label: 'Fecha',
+        fieldOptions: [
+          { value: 'fecha', label: 'Fecha' },
+          { value: 'createdAt', label: 'Registro' },
+        ],
+      }}
       searchable={false}
       columns={columns}
       fields={fields}

@@ -242,6 +242,13 @@ export default function ResidenteView({
       service={residenteService}
       queryKey={queryKeys.residentes}
       label="residente"
+      dateFilter={{
+        label: 'Fecha',
+        fieldOptions: [
+          { value: 'fecha_ingreso', label: 'Ingreso' },
+          { value: 'createdAt', label: 'Registro' },
+        ],
+      }}
       exportable={!scopedExp && !scopedAlb}
       searchable={!scopedExp}
       canCreate={!restricted}

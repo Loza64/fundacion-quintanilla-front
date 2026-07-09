@@ -107,7 +107,9 @@ test('Tour Geografía + Excel', async ({ page }) => {
     await pickOption(page, 'persona-field-paisNacimiento', 'El Salvador')
     await page.getByTestId('persona-field-idioma').fill('Español')
     await page.getByTestId('persona-form-submit').click()
+    await expect(page.getByText('persona creado')).toBeVisible()
 
+    await page.getByTestId('persona-search').fill(nombre)
     await expect(
       page.getByRole('cell', { name: nombre, exact: true })
     ).toBeVisible()

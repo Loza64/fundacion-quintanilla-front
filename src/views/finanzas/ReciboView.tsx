@@ -141,6 +141,14 @@ export default function ReciboView({
       service={reciboService}
       queryKey={queryKeys.recibos}
       label="recibo"
+      dateFilter={{
+        label: 'Fecha',
+        fieldOptions: [
+          { value: 'fecha_emision', label: 'Emisión' },
+          { value: 'fecha_pago', label: 'Pago' },
+          { value: 'createdAt', label: 'Registro' },
+        ],
+      }}
       exportable={!scopedAlbergue && !scopedResidente}
       searchable={false}
       columns={columns}

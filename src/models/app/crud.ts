@@ -35,6 +35,19 @@ export interface CrudFilter {
   options: CrudSelectOption[]
 }
 
+export interface CrudDateFilter {
+  label: string
+  fieldOptions?: CrudSelectOption[]
+  fieldParam?: string
+}
+
+export interface CrudRangeFilter {
+  label: string
+  minParam: string
+  maxParam: string
+  prefix?: string
+}
+
 export interface CrudSummaryItem {
   label: string
   value: ReactNode

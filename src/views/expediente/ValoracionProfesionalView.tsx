@@ -63,6 +63,13 @@ export default function ValoracionProfesionalView({
       service={valoracionProfesionalService}
       queryKey={queryKeys.valoracionProfesional}
       label="valoración"
+      dateFilter={{
+        label: 'Fecha',
+        fieldOptions: [
+          { value: 'fecha', label: 'Fecha' },
+          { value: 'createdAt', label: 'Registro' },
+        ],
+      }}
       searchable={false}
       columns={columns}
       fields={fields}

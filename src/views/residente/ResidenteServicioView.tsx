@@ -55,6 +55,13 @@ export default function ResidenteServicioView({
       service={residenteServicioService}
       queryKey={queryKeys.residenteServicio}
       label="servicio asignado"
+      dateFilter={{
+        label: 'Fecha',
+        fieldOptions: [
+          { value: 'fecha', label: 'Fecha' },
+          { value: 'createdAt', label: 'Registro' },
+        ],
+      }}
       searchable={false}
       columns={columns}
       fields={fields}

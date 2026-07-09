@@ -5,8 +5,10 @@ import useDebouncedValue from '@/hooks/core/useDebouncedValue'
 import type AbstractService from '@/models/api/core/AbstractService'
 import type BaseEntity from '@/models/api/core/_BaseEntity'
 import type {
+  CrudDateFilter,
   CrudField,
   CrudFilter,
+  CrudRangeFilter,
   CrudSummaryItem,
   RelationTab,
 } from '@/models/app/crud'
@@ -21,10 +23,23 @@ import {
   ReloadOutlined,
   SearchOutlined,
 } from '@ant-design/icons'
-import { Badge, Button, Input, Popover, Popconfirm, Select, Space } from 'antd'
+import {
+  Badge,
+  Button,
+  DatePicker,
+  Input,
+  InputNumber,
+  Popover,
+  Popconfirm,
+  Select,
+  Space,
+} from 'antd'
 import type { ColumnsType } from 'antd/es/table'
+import type { Dayjs } from 'dayjs'
 import { useState } from 'react'
 import { toast } from 'react-toastify'
+
+const { RangePicker } = DatePicker
 
 type FilterValue = string | number | undefined
 
@@ -36,6 +51,8 @@ export interface CrudViewProps<Entity extends BaseEntity> {
   columns: ColumnsType<Entity>
   fields: CrudField[]
   filters?: CrudFilter[]
+  dateFilter?: CrudDateFilter
+  rangeFilters?: CrudRangeFilter[]
   searchable?: boolean
   toFormValues?: (entity: Entity) => Record<string, unknown>
   toPayload?: (values: Record<string, unknown>) => Partial<Entity>
@@ -67,6 +84,8 @@ export default function CrudView<Entity extends BaseEntity>({
   columns,
   fields,
   filters = [],
+  dateFilter,
+  rangeFilters = [],
   searchable = true,
   toFormValues,
   toPayload,
@@ -95,6 +114,13 @@ export default function CrudView<Entity extends BaseEntity>({
   const [detailRecord, setDetailRecord] = useState<Entity | null>(null)
   const [isExporting, setIsExporting] = useState(false)
   const [showDeleted, setShowDeleted] = useState(false)
+  const [dateField, setDateField] = useState<string | undefined>(
+    dateFilter?.fieldOptions?.[0]?.value as string | undefined
+  )
+  const [dateRange, setDateRange] = useState<[Dayjs, Dayjs] | null>(null)
+  const [rangeValues, setRangeValues] = useState<
+    Record<string, { min?: number; max?: number }>
+  >({})
 
   const search = useDebouncedValue(searchInput, 350)
 
@@ -265,6 +291,18 @@ export default function CrudView<Entity extends BaseEntity>({
   for (const [key, value] of Object.entries(filterValues)) {
     if (value !== undefined && value !== '') extraParams[key] = value
   }
+  if (dateFilter && dateRange?.[0] && dateRange?.[1]) {
+    extraParams.from = dateRange[0].format('YYYY-MM-DD')
+    extraParams.to = dateRange[1].format('YYYY-MM-DD')
+    if (dateFilter.fieldOptions?.length) {
+      extraParams[dateFilter.fieldParam ?? 'type'] = dateField
+    }
+  }
+  for (const range of rangeFilters) {
+    const value = rangeValues[range.minParam]
+    if (value?.min != null) extraParams[range.minParam] = value.min
+    if (value?.max != null) extraParams[range.maxParam] = value.max
+  }
 
   const activeFilters = Object.values(filterValues).filter(
     (value) => value !== undefined && value !== ''
@@ -300,7 +338,13 @@ export default function CrudView<Entity extends BaseEntity>({
   )
 
   const hasToolbar =
-    searchable || filters.length > 0 || canCreate || exportable || restorable
+    searchable ||
+    filters.length > 0 ||
+    !!dateFilter ||
+    rangeFilters.length > 0 ||
+    canCreate ||
+    exportable ||
+    restorable
 
   const toolbar = hasToolbar ? (
     <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
@@ -316,6 +360,66 @@ export default function CrudView<Entity extends BaseEntity>({
             data-testid={`${tid}-search`}
           />
         )}
+        {dateFilter && (
+          <Space.Compact>
+            {dateFilter.fieldOptions?.length ? (
+              <Select<string>
+                value={dateField}
+                onChange={setDateField}
+                options={dateFilter.fieldOptions}
+                className="min-w-40!"
+                data-testid={`${tid}-datefield`}
+              />
+            ) : null}
+            <RangePicker
+              value={dateRange}
+              onChange={(dates) =>
+                setDateRange(
+                  dates?.[0] && dates?.[1] ? [dates[0], dates[1]] : null
+                )
+              }
+              format="DD/MM/YYYY"
+              placeholder={['Desde', 'Hasta']}
+              data-testid={`${tid}-daterange`}
+            />
+          </Space.Compact>
+        )}
+        {rangeFilters.map((range) => (
+          <Space.Compact key={range.minParam}>
+            <InputNumber
+              value={rangeValues[range.minParam]?.min}
+              onChange={(value) =>
+                setRangeValues((prev) => ({
+                  ...prev,
+                  [range.minParam]: {
+                    ...prev[range.minParam],
+                    min: value ?? undefined,
+                  },
+                }))
+              }
+              prefix={range.prefix}
+              placeholder={`${range.label} mín`}
+              className="w-32!"
+              data-testid={`${tid}-range-${range.minParam}`}
+            />
+            <InputNumber
+              value={rangeValues[range.minParam]?.max}
+              onChange={(value) =>
+                setRangeValues((prev) => ({
+                  ...prev,
+                  [range.minParam]: {
+                    ...prev[range.minParam],
+                    max: value ?? undefined,
+                  },
+                }))
+              }
+              prefix={range.prefix}
+              placeholder={`${range.label} máx`}
+              className="w-32!"
+              data-testid={`${tid}-range-${range.maxParam}`}
+            />
+          </Space.Compact>
+        ))}
         {filters.length > 0 && (
           <Popover
             content={filtersPanel}

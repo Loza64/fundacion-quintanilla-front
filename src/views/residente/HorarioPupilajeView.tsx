@@ -49,6 +49,13 @@ export default function HorarioPupilajeView({
       service={horarioPupilajeService}
       queryKey={queryKeys.horarioPupilaje}
       label="horario"
+      dateFilter={{
+        label: 'Fecha',
+        fieldOptions: [
+          { value: 'dia', label: 'Día' },
+          { value: 'createdAt', label: 'Registro' },
+        ],
+      }}
       searchable={false}
       columns={columns}
       fields={fields}

@@ -55,6 +55,14 @@ export default function ServicioView() {
       queryKey={queryKeys.servicios}
       label="servicio"
       exportable
+      rangeFilters={[
+        {
+          label: 'Precio',
+          minParam: 'precio_min',
+          maxParam: 'precio_max',
+          prefix: '$',
+        },
+      ]}
       columns={columns}
       fields={fields}
       filters={filters}

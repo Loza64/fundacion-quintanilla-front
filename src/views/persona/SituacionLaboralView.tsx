@@ -79,6 +79,13 @@ export default function SituacionLaboralView({
       service={situacionLaboralService}
       queryKey={queryKeys.situacionLaboral}
       label="situación laboral"
+      rangeFilters={[
+        {
+          label: 'Antigüedad',
+          minParam: 'antiguedad_min',
+          maxParam: 'antiguedad_max',
+        },
+      ]}
       searchable={false}
       columns={columns}
       fields={fields}

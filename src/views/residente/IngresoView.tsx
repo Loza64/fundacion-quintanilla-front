@@ -51,6 +51,13 @@ export default function IngresoView({
       service={ingresoService}
       queryKey={queryKeys.ingresos}
       label="ingreso"
+      dateFilter={{
+        label: 'Fecha',
+        fieldOptions: [
+          { value: 'ingreso', label: 'Fecha de ingreso' },
+          { value: 'createdAt', label: 'Fecha de registro' },
+        ],
+      }}
       searchable={false}
       columns={columns}
       fields={fields}

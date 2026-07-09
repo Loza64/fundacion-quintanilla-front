@@ -10,9 +10,13 @@ import type { ColumnsType } from 'antd/es/table'
 
 export default function AsignacionHabitacionView({
   scopeResidenteId,
+  scopeHabitacionId,
 }: {
-  scopeResidenteId: number
+  scopeResidenteId?: number
+  scopeHabitacionId?: number
 }) {
+  const scopedHab = scopeHabitacionId != null
+
   const { data: habitacionesData } = useFindAll<Habitacion>({
     queryKey: queryKeys.habitaciones,
     service: habitacionService,
@@ -28,13 +32,7 @@ export default function AsignacionHabitacionView({
     })
   )
 
-  const columns: ColumnsType<AsignacionHabitacion> = [
-    {
-      title: 'Habitación',
-      dataIndex: ['habitacion', 'nombre'],
-      key: 'habitacion',
-      align: 'center',
-    },
+  const fechaCols: ColumnsType<AsignacionHabitacion> = [
     {
       title: 'Inicio',
       dataIndex: 'fecha_inicio',
@@ -52,6 +50,29 @@ export default function AsignacionHabitacionView({
       ),
     },
   ]
+
+  const columns: ColumnsType<AsignacionHabitacion> = scopedHab
+    ? [
+        {
+          title: 'Residente',
+          key: 'residente',
+          align: 'center',
+          render: (_, item) => {
+            const persona = item.residente?.expediente?.persona
+            return persona ? `${persona.nombres} ${persona.apellidos}` : '—'
+          },
+        },
+        ...fechaCols,
+      ]
+    : [
+        {
+          title: 'Habitación',
+          dataIndex: ['habitacion', 'nombre'],
+          key: 'habitacion',
+          align: 'center',
+        },
+        ...fechaCols,
+      ]
 
   const fields: CrudField[] = [
     {
@@ -77,6 +98,10 @@ export default function AsignacionHabitacionView({
       queryKey={queryKeys.asignacionHabitacion}
       label="asignación"
       searchable={false}
+      canCreate={!scopedHab}
+      canEdit={() => !scopedHab}
+      canDelete={() => !scopedHab}
+      restorable={!scopedHab}
       columns={columns}
       fields={fields}
       fetchOne={(id) => asignacionHabitacionService.findById({ id })}
@@ -92,8 +117,16 @@ export default function AsignacionHabitacionView({
         if (habitacion != null) payload.habitacion = { id: habitacion }
         return payload as Partial<AsignacionHabitacion>
       }}
-      scopeParams={{ residente: scopeResidenteId }}
-      defaults={{ residente: { id: scopeResidenteId } }}
+      scopeParams={
+        scopedHab
+          ? { habitacion: scopeHabitacionId }
+          : { residente: scopeResidenteId }
+      }
+      defaults={
+        scopedHab
+          ? { habitacion: { id: scopeHabitacionId } }
+          : { residente: { id: scopeResidenteId } }
+      }
     />
   )
 }

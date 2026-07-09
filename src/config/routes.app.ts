@@ -33,14 +33,14 @@ export const routesConfig: Record<RoutesEnum, RouteConfig> = {
   },
   [RoutesEnum.ROLES]: {
     auth: true,
-    roles: ['ADMIN'],
+    roles: ['SUPER ADMIN'],
     permission: ['*'],
     title: 'Roles',
     search: false,
   },
   [RoutesEnum.PERMISSIONS]: {
     auth: true,
-    roles: ['ADMIN'],
+    roles: ['SUPER ADMIN'],
     permission: ['*'],
     title: 'Permisos',
     search: false,

@@ -51,6 +51,7 @@ export default function EgresoView({
       service={egresoService}
       queryKey={queryKeys.egresos}
       label="egreso"
+      dateFilter={{ label: 'Fecha de egreso' }}
       searchable={false}
       columns={columns}
       fields={fields}

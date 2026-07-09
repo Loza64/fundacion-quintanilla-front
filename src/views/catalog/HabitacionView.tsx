@@ -3,10 +3,16 @@ import { ESTADO_HABITACION, TIPO_HABITACION } from '@/enum/catalog'
 import { queryKeys } from '@/lib/queryClient'
 import type Albergue from '@/models/api/entities/Albergue'
 import type Habitacion from '@/models/api/entities/Habitacion'
-import type { CrudField, CrudFilter } from '@/models/app/crud'
+import type {
+  CrudField,
+  CrudFilter,
+  CrudSummaryItem,
+  RelationTab,
+} from '@/models/app/crud'
 import { albergueService, habitacionService } from '@/services/api'
 import { enumOptions, humanize } from '@/utils/options'
 import CrudView from '@/views/core/CrudView'
+import AsignacionHabitacionView from '@/views/residente/AsignacionHabitacionView'
 import { Tag } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 
@@ -129,6 +135,24 @@ export default function HabitacionView({
     return payload as Partial<Habitacion>
   }
 
+  const summary = (habitacion: Habitacion): CrudSummaryItem[] => [
+    { label: 'Nombre', value: habitacion.nombre },
+    { label: 'Capacidad', value: habitacion.capacidad },
+    { label: 'Tipo', value: humanize(habitacion.tipo) },
+    { label: 'Estado', value: humanize(habitacion.estado) },
+    { label: 'Albergue', value: habitacion.albergue?.nombre ?? '—' },
+  ]
+
+  const relations: RelationTab<Habitacion>[] = [
+    {
+      key: 'ocupantes',
+      label: 'Ocupantes',
+      render: (habitacion) => (
+        <AsignacionHabitacionView scopeHabitacionId={habitacion.id} />
+      ),
+    },
+  ]
+
   return (
     <CrudView<Habitacion>
       service={habitacionService}
@@ -141,6 +165,8 @@ export default function HabitacionView({
       toFormValues={toFormValues}
       toPayload={toPayload}
       fetchOne={(id) => habitacionService.findById({ id })}
+      summary={summary}
+      relations={relations}
       scopeParams={scoped ? { albergue: scopeAlbergueId } : undefined}
       defaults={scoped ? { albergue: { id: scopeAlbergueId } } : undefined}
     />

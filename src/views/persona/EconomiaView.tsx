@@ -65,6 +65,7 @@ export default function EconomiaView({
       service={economiaService}
       queryKey={queryKeys.economia}
       label="registro económico"
+      dateFilter={{ label: 'Fecha' }}
       searchable={false}
       columns={columns}
       fields={fields}
