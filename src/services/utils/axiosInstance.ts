@@ -43,7 +43,7 @@ export const axiosInstance = ({
         if (onUnauthorized) {
           onUnauthorized()
         } else {
-          toast.warning('Su sesión ha expirado')
+          toast.warning('Su sesión ha expirado, inicia session nuevamente')
           appSettings.removeToken()
           queryClient.setQueryData(queryKeys.session, null)
           window.location.href = '/login'
