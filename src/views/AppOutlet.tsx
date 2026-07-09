@@ -1,4 +1,5 @@
 'use client'
+
 import OutletContainer from '@/ui/outlet/OutletContainer'
 import { ConfigProvider, Layout } from 'antd'
 import { Outlet } from 'react-router-dom'
