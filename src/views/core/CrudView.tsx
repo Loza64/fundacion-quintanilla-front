@@ -62,6 +62,7 @@ export interface CrudViewProps<Entity extends BaseEntity> {
   canDelete?: (record: Entity) => boolean
   exportable?: boolean
   restorable?: boolean
+  defaultSort?: string
   scopeParams?: Record<string, unknown>
   defaults?: Record<string, unknown>
   relations?: RelationTab<Entity>[]
@@ -95,6 +96,7 @@ export default function CrudView<Entity extends BaseEntity>({
   canDelete = () => true,
   exportable = false,
   restorable = true,
+  defaultSort,
   scopeParams,
   defaults,
   relations = [],
@@ -475,6 +477,7 @@ export default function CrudView<Entity extends BaseEntity>({
         service={service}
         queryKey={queryKey}
         columns={columns}
+        defaultSort={defaultSort}
         toolbar={toolbar}
         rowActions={rowActions}
         extraParams={extraParams}
