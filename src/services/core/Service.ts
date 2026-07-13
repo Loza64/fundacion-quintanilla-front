@@ -32,6 +32,10 @@ export default class Service<
     this.axios = axiosInstance({ origin, initPath })
   }
 
+  get resource(): string {
+    return this.endpoint.replace(/^\/+/, '')
+  }
+
   private getUrl(endpoint?: string, idOrPath?: string | number): string {
     const base = endpoint || this.endpoint
     if (idOrPath == null) return base

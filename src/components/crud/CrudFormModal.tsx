@@ -93,7 +93,13 @@ function renderInput(field: CrudField, dataTestId: string) {
     case 'upload':
       return <AvatarField />
     default:
-      return <Input placeholder={field.placeholder} data-testid={dataTestId} />
+      return (
+        <Input
+          placeholder={field.placeholder}
+          disabled={field.disabled}
+          data-testid={dataTestId}
+        />
+      )
   }
 }
 

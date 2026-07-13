@@ -37,7 +37,7 @@ export default function RolesView() {
   ]
 
   const fields: CrudField[] = [
-    { name: 'name', label: 'Nombre', required: true },
+    { name: 'name', label: 'Nombre', disabled: true },
     { name: 'active', label: 'Activo', type: 'switch' },
     {
       name: 'permissions',
@@ -58,6 +58,7 @@ export default function RolesView() {
   const toPayload = (values: Record<string, unknown>) => {
     const { permissions, ...rest } = values
     const payload: Record<string, unknown> = { ...rest }
+    delete payload.name
     if (Array.isArray(permissions)) {
       payload.permissions = permissions.map((id) => ({ id }))
     }
@@ -70,6 +71,7 @@ export default function RolesView() {
       queryKey={queryKeys.roles}
       label="rol"
       searchable={false}
+      canCreate={false}
       columns={columns}
       fields={fields}
       toFormValues={toFormValues}
