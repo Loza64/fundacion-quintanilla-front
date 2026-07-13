@@ -2,6 +2,8 @@ import CrudDetailDrawer from '@/components/crud/CrudDetailDrawer'
 import CrudFormModal from '@/components/crud/CrudFormModal'
 import useCrud from '@/hooks/core/useCrud'
 import useDebouncedValue from '@/hooks/core/useDebouncedValue'
+import { useSession } from '@/hooks/useSession'
+import { canManageDeleted } from '@/utils/permission.app'
 import type AbstractService from '@/models/api/core/AbstractService'
 import type BaseEntity from '@/models/api/core/_BaseEntity'
 import type {
@@ -123,6 +125,10 @@ export default function CrudView<Entity extends BaseEntity>({
   const [rangeValues, setRangeValues] = useState<
     Record<string, { min?: number; max?: number }>
   >({})
+
+  const { profile } = useSession()
+  const canSeeDeleted =
+    restorable && canManageDeleted(profile, service.resource)
 
   const search = useDebouncedValue(searchInput, 350)
 
@@ -346,7 +352,7 @@ export default function CrudView<Entity extends BaseEntity>({
     rangeFilters.length > 0 ||
     canCreate ||
     exportable ||
-    restorable
+    canSeeDeleted
 
   const toolbar = hasToolbar ? (
     <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
@@ -435,7 +441,7 @@ export default function CrudView<Entity extends BaseEntity>({
             </Badge>
           </Popover>
         )}
-        {restorable && (
+        {canSeeDeleted && (
           <Button
             type={showDeleted ? 'primary' : 'default'}
             icon={showDeleted ? <ReloadOutlined /> : <DeleteOutlined />}
