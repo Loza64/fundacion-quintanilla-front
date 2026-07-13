@@ -64,7 +64,7 @@ export default function EncargadoView() {
         title="Residentes de mi albergue"
         styles={{ body: { padding: 12 } }}
       >
-        <ResidenteView scopeAlbergueId={albergue.id} restricted />
+        <ResidenteView scopeAlbergueId={albergue.id} />
       </Card>
     </div>
   )

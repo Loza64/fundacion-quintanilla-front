@@ -34,3 +34,17 @@ export function canManageDeleted(
     hasPermission(user, 'PATCH', `/api/${resource}/:id/restore`)
   )
 }
+
+export function canCreateResource(
+  user: User | null | undefined,
+  resource: string
+): boolean {
+  return hasPermission(user, 'POST', `/api/${resource}`)
+}
+
+export function canDeleteResource(
+  user: User | null | undefined,
+  resource: string
+): boolean {
+  return hasPermission(user, 'PATCH', `/api/${resource}/:id/soft-delete`)
+}
