@@ -47,7 +47,11 @@ export default function CrudListView<Entity extends BaseEntity>({
     setPagination((prev) => ({ ...prev, page: 1 }))
   }
 
-  const sort = userSort ? `${userSort},id:asc` : defaultSort
+  const sort = userSort
+    ? /^id:/.test(userSort)
+      ? userSort
+      : `${userSort},id:asc`
+    : defaultSort
 
   const queryParams = {
     ...(extraParams ?? {}),
