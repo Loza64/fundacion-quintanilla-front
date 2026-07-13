@@ -30,11 +30,9 @@ import type { ColumnsType } from 'antd/es/table'
 export default function ResidenteView({
   scopeExpedienteId,
   scopeAlbergueId,
-  restricted = false,
 }: {
   scopeExpedienteId?: number
   scopeAlbergueId?: number
-  restricted?: boolean
 }) {
   const scopedExp = scopeExpedienteId != null
   const scopedAlb = scopeAlbergueId != null
@@ -251,8 +249,6 @@ export default function ResidenteView({
       }}
       exportable={!scopedExp && !scopedAlb}
       searchable={!scopedExp}
-      canCreate={!restricted}
-      canDelete={() => !restricted}
       columns={columns}
       fields={fields}
       filters={filters}

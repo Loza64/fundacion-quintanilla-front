@@ -3,7 +3,11 @@ import CrudFormModal from '@/components/crud/CrudFormModal'
 import useCrud from '@/hooks/core/useCrud'
 import useDebouncedValue from '@/hooks/core/useDebouncedValue'
 import { useSession } from '@/hooks/useSession'
-import { canManageDeleted } from '@/utils/permission.app'
+import {
+  canCreateResource,
+  canDeleteResource,
+  canManageDeleted,
+} from '@/utils/permission.app'
 import type AbstractService from '@/models/api/core/AbstractService'
 import type BaseEntity from '@/models/api/core/_BaseEntity'
 import type {
@@ -129,6 +133,9 @@ export default function CrudView<Entity extends BaseEntity>({
   const { profile } = useSession()
   const canSeeDeleted =
     restorable && canManageDeleted(profile, service.resource)
+  const canCreateHere =
+    canCreate && canCreateResource(profile, service.resource)
+  const canDeleteHere = canDeleteResource(profile, service.resource)
 
   const search = useDebouncedValue(searchInput, 350)
 
@@ -269,7 +276,7 @@ export default function CrudView<Entity extends BaseEntity>({
               Editar
             </Button>
           )}
-          {canDelete(record) && (
+          {canDelete(record) && canDeleteHere && (
             <Popconfirm
               title={`¿Eliminar este ${label}?`}
               okText="Sí"
@@ -350,7 +357,7 @@ export default function CrudView<Entity extends BaseEntity>({
     filters.length > 0 ||
     !!dateFilter ||
     rangeFilters.length > 0 ||
-    canCreate ||
+    canCreateHere ||
     exportable ||
     canSeeDeleted
 
@@ -463,7 +470,7 @@ export default function CrudView<Entity extends BaseEntity>({
             Exportar Excel
           </Button>
         )}
-        {canCreate && !showDeleted && (
+        {canCreateHere && !showDeleted && (
           <Button
             type="primary"
             icon={<PlusOutlined />}
