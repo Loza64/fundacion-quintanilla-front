@@ -26,6 +26,7 @@ export interface CrudField {
   options?: CrudSelectOption[]
   multiple?: boolean
   hideOnEdit?: boolean
+  disabled?: boolean
   rules?: Rule[]
 }
 
