@@ -57,6 +57,7 @@ export interface ExportExcelParams {
 }
 
 export default abstract class AbstractService<Entity> {
+  abstract get resource(): string
   abstract findAll(params?: FindAllParams): Promise<PaginationResponse<Entity>>
   abstract findById(params: FindByIdParams): Promise<BaseResponse<Entity>>
   abstract findBy(params: FindBy): Promise<BaseResponse<Entity>>
