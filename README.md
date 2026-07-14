@@ -51,4 +51,4 @@ El backend incluye:
 Crea un archivo `.env` en la raíz del proyecto:
 
 ```env
-VITE_API_URL=http://localhost:4000
+VITE_API_SERVICE=http://localhost:4000
